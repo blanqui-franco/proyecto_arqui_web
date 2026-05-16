@@ -69,6 +69,15 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 - LocalStorage
 - Datos mock en memoria
 
+
+---
+
+## Integrantes
+
+- Diego Duarte
+- Blanca Franco
+- Matias Gaona
+
 ---
 
 ## Estructura del prototipo
