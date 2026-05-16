@@ -39,18 +39,18 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 ## Funcionalidades principales
 
 - Pantalla de inicio de la aplicación.
-- Ingreso manual de ingredientes disponibles en casa.
-- Generación simulada de sugerencias de recetas a partir de los ingredientes ingresados.
-- Grilla de recetas sugeridas con datos de prueba.
+- Ingreso manual de ingredientes disponibles.
+- Generación simulada de sugerencias de recetas.
+- Grilla de recetas con datos de prueba.
 - Filtros por:
-  - nombre de receta o ingrediente;
+  - nombre de receta;
+  - ingrediente;
   - categoría;
   - dificultad;
   - tiempo de preparación.
 - Navegación hacia el detalle de cada receta.
 - Visualización de:
   - ingredientes necesarios;
-  - ingredientes ingresados por el usuario;
   - ingredientes faltantes;
   - pasos de preparación;
   - tiempo estimado;
@@ -58,19 +58,38 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
   - porcentaje de coincidencia.
 - Gestión simulada de recetas favoritas.
 - Historial de búsquedas realizadas.
-- Almacenamiento local mediante `localStorage`.
-- Estructura preparada para una futura integración con Back-End e IA por texto.
+- Preparación para una futura integración con IA por texto.
 
 ---
 
-## Tecnologías utilizadas
+# Herramientas y tecnologías
+
+### Front-End
 
 - HTML5
 - CSS3
 - JavaScript
+- React
+- Vite
+- React Router
 - LocalStorage
-- Datos mock en memoria
+- Datos mock en formato JSON
 
+### Back-End
+
+- Node.js
+- Express.js
+- PostgreSQL
+- Prisma ORM
+- CORS
+- dotenv
+
+### Integración futura
+
+- API REST
+- JSON
+- Fetch API o Axios
+- Servicio externo de inteligencia artificial por texto
 
 ---
 
@@ -82,12 +101,4 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 
 ---
 
-## Estructura del prototipo
 
-El prototipo se encuentra desarrollado en un solo archivo HTML para facilitar su ejecución y revisión.
-
-```bash
-che-rembiu/
-│
-├── index.html
-└── README.md
