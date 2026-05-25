@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Che rembi'u | Prototipo Front-End</title>
+  <style>
+    :root {
+      --bg: #fff8ed;
+      --card: #ffffff;
+      --text: #2e2a24;
+      --muted: #756b5e;
+      --primary: #ef8f35;
+      --primary-dark: #c96d1d;
+      --secondary: #4f9f78;
+      --danger: #c0392b;
+      --border: #ead8c2;
+      --shadow: 0 10px 25px rgba(91, 62, 32, 0.12);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #fff8ed 0%, #fff1dc 60%, #fefefe 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 248, 237, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--primary-dark);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--primary);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    nav button,
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: #ffe3bf;
+      color: var(--primary-dark);
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .view {
+      display: none;
+      animation: fade 0.25s ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+      min-height: 460px;
+    }
+
+    .hero-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #eaf7f0;
+      color: #2f7c59;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.04;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #eaf7f0;
+      color: #2f7c59;
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .btn-danger {
+      background: #fee9e7;
+      color: var(--danger);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: #fff7ec;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .mock-phone {
+      width: min(100%, 360px);
+      margin: 0 auto;
+      background: #26221f;
+      padding: 16px;
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+    }
+
+    .phone-screen {
+      background: #fffaf2;
+      border-radius: 26px;
+      padding: 18px;
+      min-height: 430px;
+    }
+
+    .recipe-mini {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: #fff0d8;
+      color: #a95d16;
+      margin: 3px 3px 3px 0;
+    }
+
+    .badge.green {
+      background: #eaf7f0;
+      color: #2f7c59;
+    }
+
+    .badge.gray {
+      background: #f3f0ea;
+      color: #5f554b;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(239, 143, 53, 0.14);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .hint,
+    .error {
+      margin-top: 7px;
+      font-size: 0.9rem;
+    }
+
+    .error {
+      display: none;
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .preview-box {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+      min-height: 170px;
+      display: grid;
+      place-items: center;
+      background: #fffaf4;
+      overflow: hidden;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 210px;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+    }
+
+    thead {
+      background: #fff1dc;
+    }
+
+    th,
+    td {
+      padding: 15px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: #795022;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:hover td {
+      background: #fffaf4;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .ingredient-list,
+    .steps-list {
+      margin-left: 20px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-item,
+    .favorite-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #26221f;
+      color: #fff;
+      padding: 13px 16px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 20;
+      max-width: 320px;
+    }
+
+    @media (max-width: 860px) {
+      .navbar,
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .hero,
+      .grid-two,
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="brand">
+        <div class="brand-icon">🍲</div>
+        <span>Che rembi'u</span>
+      </div>
+      <nav aria-label="Navegación principal">
+        <button class="nav-btn active" data-view="homeView">Inicio</button>
+        <button class="nav-btn" data-view="searchView">Ingredientes</button>
+        <button class="nav-btn" data-view="recipesView">Recetas</button>
+        <button class="nav-btn" data-view="favoritesView">Favoritos</button>
+        <button class="nav-btn" data-view="historyView">Historial</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="homeView" class="view active">
+      <div class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">✨ Prototipo Front-End con datos de prueba</span>
+          <h1>Cociná con lo que tenés en casa</h1>
+          <p>
+            Che rembi'u es una app web que permite ingresar ingredientes o cargar una imagen simulada para recibir sugerencias de comidas. En este prototipo, la respuesta inteligente se simula con datos mock.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showView('searchView')">Buscar recetas</button>
+            <button class="btn btn-secondary" onclick="showView('recipesView')">Ver grilla de recetas</button>
+          </div>
+          <div class="stats">
+            <div class="stat"><strong id="totalRecipes">0</strong><span>recetas</span></div>
+            <div class="stat"><strong>5</strong><span>categorías</span></div>
+            <div class="stat"><strong>100%</strong><span>mock</span></div>
+          </div>
+        </div>
+
+        <div class="mock-phone" aria-label="Vista previa de aplicación móvil">
+          <div class="phone-screen">
+            <span class="badge green">Sugerencia destacada</span>
+            <h3 style="margin-top: 10px;">Tortilla paraguaya</h3>
+            <p>Ideal si tenés huevo, queso, harina y leche.</p>
+            <div class="recipe-mini">
+              <strong>Coincidencia</strong>
+              <p>90% con tus ingredientes</p>
+              <span class="badge">25 min</span>
+              <span class="badge gray">Fácil</span>
+            </div>
+            <div class="recipe-mini">
+              <strong>Ingredientes detectados</strong>
+              <p>huevo, queso Paraguay, harina, leche</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="searchView" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Ingresar ingredientes</h2>
+          <p>Escribí los ingredientes separados por coma o cargá una imagen para simular detección.</p>
+        </div>
+        <button class="btn btn-outline" onclick="loadDemoIngredients()">Usar ejemplo</button>
+      </div>
+
+      <div class="grid-two">
+        <div class="card">
+          <div class="form-group">
+            <label for="ingredientsInput">Ingredientes disponibles</label>
+            <textarea id="ingredientsInput" placeholder="Ejemplo: huevo, queso, harina, leche"></textarea>
+            <p class="hint">Para el parcial, estos datos se procesan solo en el navegador.</p>
+            <p id="ingredientError" class="error">Debés ingresar al menos un ingrediente.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="imageInput">Imagen de ingredientes</label>
+            <input id="imageInput" type="file" accept="image/*" />
+            <p class="hint">La detección por imagen es simulada en este prototipo.</p>
+          </div>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="searchRecipes()">Generar sugerencias</button>
+            <button class="btn btn-secondary" onclick="simulateImageDetection()">Simular detección IA</button>
+            <button class="btn btn-outline" onclick="clearSearch()">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Vista previa de imagen</h3>
+          <div id="imagePreview" class="preview-box">
+            <p>Subí una imagen para verla aquí.</p>
+          </div>
+          <div style="margin-top: 16px;">
+            <h3>Ingredientes detectados</h3>
+            <div id="detectedIngredients">
+              <span class="badge gray">Sin detección todavía</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="recipesView" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Recetas sugeridas</h2>
+          <p>Grilla con datos de prueba. Desde aquí se puede navegar al detalle de cada receta.</p>
+        </div>
+        <button class="btn btn-primary" onclick="showView('searchView')">Nueva búsqueda</button>
+      </div>
+
+      <div class="controls">
+        <input id="textFilter" type="search" placeholder="Buscar por receta o ingrediente" oninput="renderRecipes()" />
+        <select id="difficultyFilter" onchange="renderRecipes()">
+          <option value="">Todas las dificultades</option>
+          <option value="Fácil">Fácil</option>
+          <option value="Media">Media</option>
+        </select>
+        <select id="categoryFilter" onchange="renderRecipes()">
+          <option value="">Todas las categorías</option>
+          <option value="Tradicional">Tradicional</option>
+          <option value="Rápida">Rápida</option>
+          <option value="Económica">Económica</option>
+          <option value="Postre">Postre</option>
+        </select>
+        <select id="timeFilter" onchange="renderRecipes()">
+          <option value="">Cualquier tiempo</option>
+          <option value="15">Hasta 15 min</option>
+          <option value="30">Hasta 30 min</option>
+          <option value="60">Hasta 60 min</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Receta</th>
+              <th>Categoría</th>
+              <th>Tiempo</th>
+              <th>Dificultad</th>
+              <th>Coincidencia</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="recipesTableBody"></tbody>
+        </table>
+        <div id="emptyRecipes" class="empty-state" style="display: none;">No se encontraron recetas para los filtros seleccionados.</div>
+      </div>
+    </section>
+
+    <section id="detailView" class="view">
+      <div class="section-header">
+        <div>
+          <h2 id="detailTitle">Detalle de receta</h2>
+          <p id="detailDescription">Información ampliada de la receta seleccionada.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-outline" onclick="showView('recipesView')">Volver a la grilla</button>
+          <button id="favoriteDetailButton" class="btn btn-secondary">Guardar favorito</button>
+        </div>
+      </div>
+
+      <div class="detail-layout">
+        <div class="card">
+          <h3>Pasos de preparación</h3>
+          <ol id="detailSteps" class="steps-list"></ol>
+        </div>
+        <div class="card">
+          <h3>Datos principales</h3>
+          <p><strong>Tiempo:</strong> <span id="detailTime"></span></p>
+          <p><strong>Dificultad:</strong> <span id="detailDifficulty"></span></p>
+          <p><strong>Categoría:</strong> <span id="detailCategory"></span></p>
+          <p><strong>Coincidencia:</strong> <span id="detailMatch"></span>%</p>
+          <br />
+          <h3>Ingredientes</h3>
+          <ul id="detailIngredients" class="ingredient-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="favoritesView" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Recetas favoritas</h2>
+          <p>Listado simulado de recetas guardadas por el usuario.</p>
+        </div>
+        <button class="btn btn-outline" onclick="clearFavorites()">Vaciar favoritos</button>
+      </div>
+      <div id="favoritesList" class="favorites-grid"></div>
+    </section>
+
+    <section id="historyView" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Historial de búsquedas</h2>
+          <p>Registro de búsquedas realizadas durante la sesión actual.</p>
+        </div>
+        <button class="btn btn-outline" onclick="clearHistory()">Limpiar historial</button>
+      </div>
+      <div id="historyList" class="timeline"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const recipes = [
+      {
+        id: 1,
+        name: "Tortilla paraguaya",
+        category: "Tradicional",
+        time: 25,
+        difficulty: "Fácil",
+        match: 90,
+        description: "Una opción rápida y rendidora usando ingredientes básicos.",
+        ingredients: ["huevo", "queso Paraguay", "harina", "leche", "sal"],
+        steps: [
+          "Batir los huevos con una pizca de sal.",
+          "Agregar la harina, la leche y mezclar hasta formar una preparación uniforme.",
+          "Incorporar el queso desmenuzado.",
+          "Cocinar en sartén caliente hasta dorar ambos lados."
+        ]
+      },
+      {
+        id: 2,
+        name: "Omelette de queso",
+        category: "Rápida",
+        time: 10,
+        difficulty: "Fácil",
+        match: 85,
+        description: "Receta sencilla para resolver una comida en pocos minutos.",
+        ingredients: ["huevo", "queso", "sal", "orégano"],
+        steps: [
+          "Batir los huevos con sal y orégano.",
+          "Verter la mezcla en una sartén caliente.",
+          "Agregar queso en el centro.",
+          "Doblar el omelette y cocinar hasta que el queso se derrita."
+        ]
+      },
+      {
+        id: 3,
+        name: "Sopa paraguaya simple",
+        category: "Tradicional",
+        time: 55,
+        difficulty: "Media",
+        match: 75,
+        description: "Versión práctica de una comida tradicional paraguaya.",
+        ingredients: ["harina de maíz", "queso Paraguay", "cebolla", "huevo", "leche"],
+        steps: [
+          "Rehogar la cebolla hasta que quede transparente.",
+          "Mezclar la harina de maíz con leche, huevo y queso.",
+          "Agregar la cebolla rehogada.",
+          "Hornear hasta que la superficie quede dorada."
+        ]
+      },
+      {
+        id: 4,
+        name: "Chipa guasu",
+        category: "Tradicional",
+        time: 60,
+        difficulty: "Media",
+        match: 70,
+        description: "Plato tradicional a base de choclo y queso.",
+        ingredients: ["choclo", "queso Paraguay", "huevo", "leche", "cebolla"],
+        steps: [
+          "Procesar o moler el choclo.",
+          "Mezclar con huevo, leche, queso y cebolla rehogada.",
+          "Colocar la preparación en una fuente.",
+          "Hornear hasta que tenga consistencia firme."
+        ]
+      },
+      {
+        id: 5,
+        name: "Arroz salteado económico",
+        category: "Económica",
+        time: 20,
+        difficulty: "Fácil",
+        match: 65,
+        description: "Ideal para reutilizar arroz cocido y verduras disponibles.",
+        ingredients: ["arroz", "zanahoria", "cebolla", "huevo", "aceite"],
+        steps: [
+          "Picar la cebolla y la zanahoria.",
+          "Saltear las verduras en una sartén.",
+          "Agregar el arroz cocido.",
+          "Incorporar huevo revuelto y mezclar."
+        ]
+      },
+      {
+        id: 6,
+        name: "Mbeju rápido",
+        category: "Tradicional",
+        time: 18,
+        difficulty: "Fácil",
+        match: 80,
+        description: "Preparación típica con almidón y queso.",
+        ingredients: ["almidón", "queso Paraguay", "manteca", "sal", "leche"],
+        steps: [
+          "Mezclar almidón, sal y manteca hasta obtener una textura arenosa.",
+          "Agregar queso desmenuzado.",
+          "Humedecer levemente con leche si es necesario.",
+          "Cocinar en sartén presionando hasta dorar ambos lados."
+        ]
+      },
+      {
+        id: 7,
+        name: "Panqueques dulces",
+        category: "Postre",
+        time: 22,
+        difficulty: "Fácil",
+        match: 68,
+        description: "Opción dulce con pocos ingredientes.",
+        ingredients: ["harina", "huevo", "leche", "azúcar", "manteca"],
+        steps: [
+          "Mezclar harina, huevo, leche y azúcar.",
+          "Dejar reposar la mezcla unos minutos.",
+          "Cocinar porciones finas en una sartén.",
+          "Servir con dulce, miel o frutas."
+        ]
+      }
+    ];
+
+    let visibleRecipes = [...recipes];
+    let favorites = JSON.parse(localStorage.getItem("cheRembiuFavorites")) || [];
+    let history = JSON.parse(localStorage.getItem("cheRembiuHistory")) || [];
+    let selectedRecipeId = null;
+
+    const views = document.querySelectorAll(".view");
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const tableBody = document.getElementById("recipesTableBody");
+    const emptyRecipes = document.getElementById("emptyRecipes");
+
+    document.getElementById("totalRecipes").textContent = recipes.length;
+
+    function showView(viewId) {
+      views.forEach(view => view.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+
+      navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === viewId);
+      });
+
+      if (viewId === "recipesView") renderRecipes();
+      if (viewId === "favoritesView") renderFavorites();
+      if (viewId === "historyView") renderHistory();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => showView(button.dataset.view));
+    });
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function getInputIngredients() {
+      return document.getElementById("ingredientsInput").value
+        .split(",")
+        .map(item => normalize(item))
+        .filter(Boolean);
+    }
+
+    function calculateMatch(recipe, inputIngredients) {
+      if (!inputIngredients.length) return recipe.match;
+      const recipeIngredients = recipe.ingredients.map(normalize);
+      const found = recipeIngredients.filter(ingredient =>
+        inputIngredients.some(input => ingredient.includes(input) || input.includes(ingredient))
+      ).length;
+      return Math.round((found / recipeIngredients.length) * 100);
+    }
+
+    function searchRecipes() {
+      const ingredients = getInputIngredients();
+      const error = document.getElementById("ingredientError");
+
+      if (!ingredients.length) {
+        error.style.display = "block";
+        return;
+      }
+
+      error.style.display = "none";
+
+      visibleRecipes = recipes
+        .map(recipe => ({ ...recipe, match: calculateMatch(recipe, ingredients) }))
+        .filter(recipe => recipe.match > 0)
+        .sort((a, b) => b.match - a.match);
+
+      const rawIngredients = document.getElementById("ingredientsInput").value;
+      history.unshift({
+        date: new Date().toLocaleString("es-PY"),
+        ingredients: rawIngredients,
+        results: visibleRecipes.length
+      });
+      history = history.slice(0, 10);
+      localStorage.setItem("cheRembiuHistory", JSON.stringify(history));
+
+      showToast("Sugerencias generadas con datos de prueba.");
+      showView("recipesView");
+    }
+
+    function renderRecipes() {
+      const text = normalize(document.getElementById("textFilter").value || "");
+      const difficulty = document.getElementById("difficultyFilter").value;
+      const category = document.getElementById("categoryFilter").value;
+      const maxTime = Number(document.getElementById("timeFilter").value || 0);
+
+      const filtered = visibleRecipes.filter(recipe => {
+        const searchable = normalize(`${recipe.name} ${recipe.category} ${recipe.ingredients.join(" ")}`);
+        const matchesText = !text || searchable.includes(text);
+        const matchesDifficulty = !difficulty || recipe.difficulty === difficulty;
+        const matchesCategory = !category || recipe.category === category;
+        const matchesTime = !maxTime || recipe.time <= maxTime;
+        return matchesText && matchesDifficulty && matchesCategory && matchesTime;
+      });
+
+      tableBody.innerHTML = filtered.map(recipe => `
+        <tr>
+          <td><strong>${recipe.name}</strong><br><small>${recipe.description}</small></td>
+          <td><span class="badge green">${recipe.category}</span></td>
+          <td>${recipe.time} min</td>
+          <td><span class="badge gray">${recipe.difficulty}</span></td>
+          <td><strong>${recipe.match}%</strong></td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-primary" onclick="openRecipeDetail(${recipe.id})">Ver detalle</button>
+              <button class="btn btn-secondary" onclick="toggleFavorite(${recipe.id})">Favorito</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      emptyRecipes.style.display = filtered.length ? "none" : "block";
+    }
+
+    function openRecipeDetail(id) {
+      const recipe = recipes.find(item => item.id === id);
+      if (!recipe) return;
+
+      selectedRecipeId = id;
+      document.getElementById("detailTitle").textContent = recipe.name;
+      document.getElementById("detailDescription").textContent = recipe.description;
+      document.getElementById("detailTime").textContent = `${recipe.time} minutos`;
+      document.getElementById("detailDifficulty").textContent = recipe.difficulty;
+      document.getElementById("detailCategory").textContent = recipe.category;
+      document.getElementById("detailMatch").textContent = recipe.match;
+
+      document.getElementById("detailIngredients").innerHTML = recipe.ingredients
+        .map(item => `<li>${item}</li>`)
+        .join("");
+
+      document.getElementById("detailSteps").innerHTML = recipe.steps
+        .map(step => `<li>${step}</li>`)
+        .join("");
+
+      document.getElementById("favoriteDetailButton").onclick = () => toggleFavorite(id);
+      showView("detailView");
+    }
+
+    function toggleFavorite(id) {
+      const exists = favorites.includes(id);
+      favorites = exists ? favorites.filter(item => item !== id) : [...favorites, id];
+      localStorage.setItem("cheRembiuFavorites", JSON.stringify(favorites));
+      showToast(exists ? "Receta quitada de favoritos." : "Receta guardada en favoritos.");
+      renderFavorites();
+    }
+
+    function renderFavorites() {
+      const container = document.getElementById("favoritesList");
+      const favoriteRecipes = recipes.filter(recipe => favorites.includes(recipe.id));
+
+      if (!favoriteRecipes.length) {
+        container.innerHTML = `<div class="empty-state card">Todavía no guardaste recetas favoritas.</div>`;
+        return;
+      }
+
+      container.innerHTML = favoriteRecipes.map(recipe => `
+        <article class="favorite-card">
+          <div>
+            <h3>${recipe.name}</h3>
+            <p>${recipe.time} min · ${recipe.difficulty} · ${recipe.category}</p>
+          </div>
+          <div class="actions-cell">
+            <button class="btn btn-primary" onclick="openRecipeDetail(${recipe.id})">Ver</button>
+            <button class="btn btn-danger" onclick="toggleFavorite(${recipe.id})">Quitar</button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function clearFavorites() {
+      favorites = [];
+      localStorage.setItem("cheRembiuFavorites", JSON.stringify(favorites));
+      renderFavorites();
+      showToast("Favoritos eliminados.");
+    }
+
+    function renderHistory() {
+      const container = document.getElementById("historyList");
+
+      if (!history.length) {
+        container.innerHTML = `<div class="empty-state card">Todavía no hay búsquedas registradas.</div>`;
+        return;
+      }
+
+      container.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div>
+            <strong>${item.ingredients}</strong>
+            <p>${item.date} · ${item.results} resultado(s)</p>
+          </div>
+          <span class="badge green">Búsqueda</span>
+        </div>
+      `).join("");
+    }
+
+    function clearHistory() {
+      history = [];
+      localStorage.setItem("cheRembiuHistory", JSON.stringify(history));
+      renderHistory();
+      showToast("Historial limpiado.");
+    }
+
+    function loadDemoIngredients() {
+      document.getElementById("ingredientsInput").value = "huevo, queso Paraguay, harina, leche";
+      document.getElementById("ingredientError").style.display = "none";
+      document.getElementById("detectedIngredients").innerHTML = `
+        <span class="badge">huevo</span>
+        <span class="badge">queso Paraguay</span>
+        <span class="badge">harina</span>
+        <span class="badge">leche</span>
+      `;
+      showToast("Ingredientes de ejemplo cargados.");
+    }
+
+    function simulateImageDetection() {
+      document.getElementById("ingredientsInput").value = "huevo, queso Paraguay, harina, cebolla";
+      document.getElementById("detectedIngredients").innerHTML = `
+        <span class="badge">huevo</span>
+        <span class="badge">queso Paraguay</span>
+        <span class="badge">harina</span>
+        <span class="badge">cebolla</span>
+      `;
+      showToast("Detección simulada: ingredientes cargados.");
+    }
+
+    function clearSearch() {
+      document.getElementById("ingredientsInput").value = "";
+      document.getElementById("imageInput").value = "";
+      document.getElementById("ingredientError").style.display = "none";
+      document.getElementById("detectedIngredients").innerHTML = `<span class="badge gray">Sin detección todavía</span>`;
+      document.getElementById("imagePreview").innerHTML = `<p>Subí una imagen para verla aquí.</p>`;
+      visibleRecipes = [...recipes];
+      renderRecipes();
+      showToast("Formulario limpiado.");
+    }
+
+    document.getElementById("imageInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+      const preview = document.getElementById("imagePreview");
+
+      if (!file) {
+        preview.innerHTML = `<p>Subí una imagen para verla aquí.</p>`;
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.innerHTML = `<img src="${e.target.result}" alt="Imagen cargada por el usuario" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      clearTimeout(showToast.timeout);
+      showToast.timeout = setTimeout(() => {
+        toast.style.display = "none";
+      }, 2500);
+    }
+
+    renderRecipes();
+    renderFavorites();
+    renderHistory();
+  </script>
+</body>
+</html>
