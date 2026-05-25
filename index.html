@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Che rembi'u: ingresá tus ingredientes y descubrí qué podés cocinar hoy." />
+  <title>Che rembi'u 🍲 — Cocinás con lo que tenés</title>
+
+  <!--
+    ╔══════════════════════════════════════╗
+    ║  CSS — orden de carga obligatorio    ║
+    ║  1. variables  (tokens de diseño)    ║
+    ║  2. base       (reset + tipografía)  ║
+    ║  3. layout     (estructura/grillas)  ║
+    ║  4. components (UI reutilizable)     ║
+    ║  5. views      (estilos por vista)   ║
+    ╚══════════════════════════════════════╝
+  -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/views.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ HEADER ══ -->
+  <header>
+    <div class="navbar">
+
+      <!-- Marca / Logo (botón para navegar al inicio) -->
+      <button
+        class="brand"
+        data-navigate="homeView"
+        aria-label="Che rembi'u — ir al inicio"
+      >
+        <span class="brand-icon" aria-hidden="true">🍲</span>
+        <span>Che rembi'u</span>
+      </button>
+
+      <!-- Navegación principal -->
+      <nav aria-label="Navegación principal">
+        <button
+          class="nav-btn active"
+          data-navigate="homeView"
+          aria-current="page"
+        >Inicio</button>
+
+        <button
+          class="nav-btn"
+          data-navigate="searchView"
+        >Ingredientes</button>
+
+        <button
+          class="nav-btn"
+          data-navigate="recipesView"
+        >Recetas</button>
+
+        <button
+          class="nav-btn"
+          data-navigate="favoritesView"
+        >Favoritos</button>
+
+        <button
+          class="nav-btn"
+          data-navigate="historyView"
+        >Historial</button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════ MAIN ════ -->
+  <main class="container" id="mainContent">
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: INICIO                                  ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="homeView"
+      class="view active"
+      aria-labelledby="homeHeading"
+    >
+      <div class="hero">
+
+        <!-- Columna izquierda: hero card -->
+        <div class="hero-card">
+          <span class="eyebrow">✨ Prototipo Front-End con micro-servicios mock</span>
+
+          <h1 id="homeHeading">Cociná con lo que tenés en casa</h1>
+
+          <p>
+            Che rembi'u es una app web que permite ingresar ingredientes o cargar
+            una imagen para recibir sugerencias de comidas paraguayas.
+            Las recetas se obtienen desde micro-servicios con datos de prueba.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-navigate="searchView">
+              Buscar recetas
+            </button>
+            <button class="btn btn-secondary" data-navigate="recipesView">
+              Ver grilla de recetas
+            </button>
+          </div>
+
+          <!-- Estadísticas dinámicas (JS las actualiza) -->
+          <div class="stats" aria-label="Estadísticas de la aplicación">
+            <div class="stat">
+              <strong id="totalRecipes" aria-live="polite">—</strong>
+              <span>recetas</span>
+            </div>
+            <div class="stat">
+              <strong>5</strong>
+              <span>categorías</span>
+            </div>
+            <div class="stat">
+              <strong>3</strong>
+              <span>servicios</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: mock de teléfono (decorativo) -->
+        <div
+          class="mock-phone"
+          role="img"
+          aria-label="Vista previa de la aplicación en pantalla de celular"
+        >
+          <div class="phone-screen">
+            <span class="badge green">Sugerencia destacada</span>
+            <p class="phone-title">Tortilla paraguaya</p>
+            <p>Ideal si tenés huevo, queso, harina y leche.</p>
+
+            <div class="recipe-mini">
+              <strong>Coincidencia</strong>
+              <p>90% con tus ingredientes</p>
+              <span class="badge">25 min</span>
+              <span class="badge gray">Fácil</span>
+            </div>
+
+            <div class="recipe-mini">
+              <strong>Ingredientes detectados</strong>
+              <p>huevo, queso Paraguay, harina, leche</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: INGREDIENTES                            ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="searchView"
+      class="view"
+      aria-labelledby="searchHeading"
+    >
+      <div class="section-header">
+        <div>
+          <h2 id="searchHeading">Ingresar ingredientes</h2>
+          <p>
+            Escribí los ingredientes separados por coma o cargá una imagen
+            para simular la detección automática.
+          </p>
+        </div>
+        <button class="btn btn-outline" data-action="load-demo">
+          Usar ejemplo
+        </button>
+      </div>
+
+      <div class="grid-two">
+
+        <!-- Formulario de búsqueda -->
+        <div class="card">
+          <form id="searchForm" novalidate>
+
+            <div class="form-group">
+              <label for="ingredientsInput">Ingredientes disponibles</label>
+              <textarea
+                id="ingredientsInput"
+                name="ingredients"
+                placeholder="Ejemplo: huevo, queso, harina, leche"
+                aria-describedby="ingredientsHint ingredientError"
+                aria-required="true"
+              ></textarea>
+              <p id="ingredientsHint" class="hint">
+                Los datos se envían al micro-servicio de búsqueda para calcular
+                el porcentaje de coincidencia.
+              </p>
+              <p
+                id="ingredientError"
+                class="error"
+                role="alert"
+                aria-live="assertive"
+              >
+                Debés ingresar al menos un ingrediente.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label for="imageInput">Imagen de ingredientes</label>
+              <input
+                id="imageInput"
+                type="file"
+                accept="image/*"
+                aria-describedby="imageHint"
+              />
+              <p id="imageHint" class="hint">
+                La detección por imagen es simulada en este prototipo.
+              </p>
+            </div>
+
+            <div class="hero-actions">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                data-action="search"
+              >
+                Generar sugerencias
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-action="simulate-detection"
+              >
+                Simular detección IA
+              </button>
+              <button
+                type="reset"
+                class="btn btn-outline"
+                data-action="clear-search"
+              >
+                Limpiar
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Vista previa de imagen e ingredientes detectados -->
+        <div class="card">
+          <h3>Vista previa de imagen</h3>
+          <div
+            id="imagePreview"
+            class="preview-box"
+            aria-live="polite"
+            aria-label="Vista previa de la imagen cargada por el usuario"
+          >
+            <p>Subí una imagen para verla aquí.</p>
+          </div>
+
+          <div class="detected-section">
+            <h3>Ingredientes detectados</h3>
+            <div
+              id="detectedIngredients"
+              aria-live="polite"
+              aria-label="Ingredientes detectados por la imagen"
+            >
+              <span class="badge gray">Sin detección todavía</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: RECETAS                                 ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="recipesView"
+      class="view"
+      aria-labelledby="recipesHeading"
+    >
+      <div class="section-header">
+        <div>
+          <h2 id="recipesHeading">Recetas sugeridas</h2>
+          <p>
+            Recetas obtenidas desde el micro-servicio de recetas.
+            Podés filtrar la grilla y ver el detalle de cada una.
+          </p>
+        </div>
+        <button class="btn btn-primary" data-navigate="searchView">
+          Nueva búsqueda
+        </button>
+      </div>
+
+      <!-- Filtros de búsqueda -->
+      <div
+        class="controls"
+        role="search"
+        aria-label="Filtros de recetas"
+      >
+        <input
+          id="textFilter"
+          type="search"
+          placeholder="Buscar por receta o ingrediente"
+          aria-label="Buscar por nombre de receta o ingrediente"
+        />
+
+        <select
+          id="difficultyFilter"
+          aria-label="Filtrar por dificultad"
+        >
+          <option value="">Todas las dificultades</option>
+          <option value="Fácil">Fácil</option>
+          <option value="Media">Media</option>
+        </select>
+
+        <select
+          id="categoryFilter"
+          aria-label="Filtrar por categoría"
+        >
+          <option value="">Todas las categorías</option>
+          <option value="Tradicional">Tradicional</option>
+          <option value="Rápida">Rápida</option>
+          <option value="Económica">Económica</option>
+          <option value="Postre">Postre</option>
+        </select>
+
+        <select
+          id="timeFilter"
+          aria-label="Filtrar por tiempo de preparación"
+        >
+          <option value="">Cualquier tiempo</option>
+          <option value="15">Hasta 15 min</option>
+          <option value="30">Hasta 30 min</option>
+          <option value="60">Hasta 60 min</option>
+        </select>
+      </div>
+
+      <!-- Estado de carga -->
+      <div
+        id="recipesLoading"
+        class="loading-state"
+        role="status"
+        aria-live="polite"
+        aria-label="Cargando recetas"
+      >
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando recetas…</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div
+        id="recipesError"
+        class="error-state"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+
+      <!-- Tabla de recetas -->
+      <div class="table-wrapper" id="recipesTableWrapper">
+        <table aria-label="Lista de recetas sugeridas">
+          <thead>
+            <tr>
+              <th scope="col">Receta</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Tiempo</th>
+              <th scope="col">Dificultad</th>
+              <th scope="col">Coincidencia</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody
+            id="recipesTableBody"
+            aria-live="polite"
+            aria-relevant="additions removals"
+          ></tbody>
+        </table>
+
+        <p
+          id="emptyRecipes"
+          class="empty-state"
+          role="status"
+          hidden
+        >
+          No se encontraron recetas para los filtros seleccionados.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: DETALLE DE RECETA                       ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="detailView"
+      class="view"
+      aria-labelledby="detailTitle"
+    >
+      <div class="section-header">
+        <div>
+          <h2 id="detailTitle">Detalle de receta</h2>
+          <p id="detailDescription">
+            Información ampliada de la receta seleccionada.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-outline" data-navigate="recipesView">
+            Volver a la grilla
+          </button>
+          <button
+            id="favoriteDetailButton"
+            class="btn btn-secondary"
+            data-action="toggle-favorite-detail"
+            aria-label="Guardar esta receta en favoritos"
+          >
+            Guardar favorito
+          </button>
+        </div>
+      </div>
+
+      <!-- Estado de carga -->
+      <div
+        id="detailLoading"
+        class="loading-state"
+        role="status"
+        aria-live="polite"
+        aria-label="Cargando detalle de receta"
+      >
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando detalle…</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div
+        id="detailError"
+        class="error-state"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+
+      <!-- Contenido del detalle -->
+      <div id="detailContent" class="detail-layout">
+
+        <!-- Pasos de preparación -->
+        <div class="card">
+          <h3>Pasos de preparación</h3>
+          <ol
+            id="detailSteps"
+            class="steps-list"
+            aria-label="Pasos de preparación de la receta"
+          ></ol>
+        </div>
+
+        <!-- Datos y lista de ingredientes -->
+        <div class="card">
+          <h3>Datos principales</h3>
+          <dl class="detail-meta">
+            <dt>Tiempo</dt>
+            <dd id="detailTime"></dd>
+
+            <dt>Dificultad</dt>
+            <dd id="detailDifficulty"></dd>
+
+            <dt>Categoría</dt>
+            <dd id="detailCategory"></dd>
+
+            <dt>Coincidencia</dt>
+            <dd><span id="detailMatch"></span>%</dd>
+          </dl>
+
+          <h3 class="mt-md">Ingredientes</h3>
+          <ul
+            id="detailIngredients"
+            class="ingredient-list"
+            aria-label="Ingredientes necesarios para la receta"
+          ></ul>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: FAVORITOS                               ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="favoritesView"
+      class="view"
+      aria-labelledby="favoritesHeading"
+    >
+      <div class="section-header">
+        <div>
+          <h2 id="favoritesHeading">Recetas favoritas</h2>
+          <p>Listado de recetas guardadas por el usuario.</p>
+        </div>
+        <button class="btn btn-outline" data-action="clear-favorites">
+          Vaciar favoritos
+        </button>
+      </div>
+
+      <div
+        id="favoritesList"
+        class="favorites-grid"
+        aria-live="polite"
+        aria-label="Lista de recetas favoritas"
+      ></div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════╗
+         ║  VISTA: HISTORIAL                               ║
+         ╚══════════════════════════════════════════════════╝ -->
+    <section
+      id="historyView"
+      class="view"
+      aria-labelledby="historyHeading"
+    >
+      <div class="section-header">
+        <div>
+          <h2 id="historyHeading">Historial de búsquedas</h2>
+          <p>Registro de las últimas búsquedas realizadas.</p>
+        </div>
+        <button class="btn btn-outline" data-action="clear-history">
+          Limpiar historial
+        </button>
+      </div>
+
+      <!-- Estado de carga -->
+      <div
+        id="historyLoading"
+        class="loading-state"
+        role="status"
+        aria-live="polite"
+        aria-label="Cargando historial"
+      >
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando historial…</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div
+        id="historyError"
+        class="error-state"
+        role="alert"
+        aria-live="assertive"
+      ></div>
+
+      <div
+        id="historyList"
+        class="timeline"
+        aria-live="polite"
+        aria-label="Historial de búsquedas realizadas"
+      ></div>
+    </section>
+
+
+  </main><!-- /main.container -->
+
+
+  <!-- ═══════════════════════════════════════ TOAST ═══════ -->
+  <!--
+    Notificación flotante.
+    JS muestra/oculta este elemento y escribe el mensaje.
+    role="status" + aria-live="polite" → lectura no interrumpida.
+  -->
+  <div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+
+  <!-- ═══════════════════════════════════════ SCRIPTS ═════ -->
+  <!--
+    Orden de carga (sin ES modules; dependencias implícitas):
+      1. api       → fetch a los micro-servicios
+      2. storage   → wrappers de localStorage
+      3. toast     → showToast()
+      4. filters   → normalize()
+      5. router    → showView(), bind data-navigate
+      6. imageHandler → FileReader, preview, simulateDetection
+      7. recipes   → renderRecipes(), openRecipeDetail()
+      8. favorites → toggleFavorite(), renderFavorites()
+      9. history   → renderHistory(), clearHistory()
+     10. main      → init, event listeners globales (data-action)
+  -->
+  <script src="js/api.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/imageHandler.js"></script>
+  <script src="js/recipes.js"></script>
+  <script src="js/favorites.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

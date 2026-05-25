@@ -1,0 +1,49 @@
+/* ═══════════════════════════════════════════════════════════
+   VARIABLES GLOBALES — Che rembi'u
+   Todos los valores de diseño reutilizables se definen aquí.
+   Importar este archivo PRIMERO en index.html.
+═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Colores de fondo ─────────────────────────────────── */
+  --bg: #fff8ed;
+  --card: #ffffff;
+
+  /* ── Tipografía ───────────────────────────────────────── */
+  --text: #2e2a24;
+  --muted: #756b5e;
+
+  /* ── Marca / Primario ─────────────────────────────────── */
+  --primary: #ef8f35;
+  --primary-dark: #c96d1d;
+  --primary-bg: #fff0d8;
+  --primary-hover-bg: #ffe3bf;
+
+  /* ── Secundario / Verde ───────────────────────────────── */
+  --secondary: #4f9f78;
+  --secondary-dark: #2f7c59;
+  --secondary-bg: #eaf7f0;
+
+  /* ── Peligro / Error ──────────────────────────────────── */
+  --danger: #c0392b;
+  --danger-bg: #fee9e7;
+
+  /* ── Bordes y decoración ──────────────────────────────── */
+  --border: #ead8c2;
+  --shadow: 0 10px 25px rgba(91, 62, 32, 0.12);
+
+  /* ── Radios ───────────────────────────────────────────── */
+  --radius: 18px;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+
+  /* ── Espaciados ───────────────────────────────────────── */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* ── Anchos máximos ───────────────────────────────────── */
+  --max-width: 1180px;
+}

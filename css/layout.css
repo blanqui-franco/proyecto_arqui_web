@@ -1,0 +1,164 @@
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT — Che rembi'u
+   Header, navbar, contenedor, vistas SPA, grillas y responsive.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Header ───────────────────────────────────────────── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 248, 237, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Barra de navegación ──────────────────────────────── */
+.navbar {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Marca / logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--primary-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+
+/* Grupo de botones de navegación */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  justify-content: flex-end;
+}
+
+/* ── Contenedor principal ─────────────────────────────── */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) 20px 60px;
+}
+
+/* ── Sistema de vistas SPA ────────────────────────────── */
+.view {
+  display: none;
+  animation: viewFade 0.25s ease;
+}
+
+.view.active {
+  display: block;
+}
+
+@keyframes viewFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Encabezado de sección ────────────────────────────── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+/* ── Grillas de layout ────────────────────────────────── */
+
+/* 2 columnas asimétricas (búsqueda, detalle) */
+.grid-two {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* Estadísticas en 3 columnas iguales */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+  margin-top: 18px;
+}
+
+/* Controles de filtro de la vista Recetas */
+.controls {
+  display: grid;
+  grid-template-columns: 1.3fr repeat(3, 1fr);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 860px) {
+  /* Navbar en columna */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav {
+    justify-content: flex-start;
+  }
+
+  /* Section header en columna */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Grillas a una sola columna */
+  .grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  /* Filtros en columna */
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}

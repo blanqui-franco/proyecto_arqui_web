@@ -1,0 +1,405 @@
+/* ═══════════════════════════════════════════════════════════
+   COMPONENTS — Che rembi'u
+   Botones, cards, badges, formularios, tabla, toast,
+   estados de carga/error y spinner.
+═══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════
+   BOTONES
+══════════════════════════════════════════════════════ */
+
+/* Base compartida: nav buttons + .btn */
+nav button,
+.btn {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 16px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+/* Foco visible accesible */
+nav button:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* Nav: estado hover y activo */
+nav button:hover,
+nav button.active {
+  background: var(--primary-hover-bg);
+  color: var(--primary-dark);
+}
+
+/* Variante primaria (naranja sólido) */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+/* Variante secundaria (verde suave) */
+.btn-secondary {
+  background: var(--secondary-bg);
+  color: var(--secondary-dark);
+}
+
+.btn-secondary:hover {
+  background: #d4f0e3;
+}
+
+/* Variante outline (borde + fondo blanco) */
+.btn-outline {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+}
+
+.btn-outline:hover {
+  background: #fff7ec;
+}
+
+/* Variante peligro (rojo suave) */
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: #fcd1ce;
+}
+
+/* ══════════════════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════════════════ */
+.card,
+.hero-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 26px;
+}
+
+/* ══════════════════════════════════════════════════════
+   EYEBROW (etiqueta de contexto)
+══════════════════════════════════════════════════════ */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--secondary-bg);
+  color: var(--secondary-dark);
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  margin-bottom: var(--space-md);
+  font-size: 0.9rem;
+}
+
+/* ══════════════════════════════════════════════════════
+   BADGES (etiquetas inline)
+══════════════════════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: var(--primary-bg);
+  color: #a95d16;
+  margin: 3px 3px 3px 0;
+}
+
+.badge.green {
+  background: var(--secondary-bg);
+  color: var(--secondary-dark);
+}
+
+.badge.gray {
+  background: #f3f0ea;
+  color: #5f554b;
+}
+
+/* ══════════════════════════════════════════════════════
+   HERO ACTIONS (grupo de botones de acción)
+══════════════════════════════════════════════════════ */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: 22px;
+}
+
+/* ══════════════════════════════════════════════════════
+   ESTADÍSTICAS (inicio)
+══════════════════════════════════════════════════════ */
+.stat {
+  background: #fff7ec;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.stat strong {
+  display: block;
+  font-size: 1.4rem;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+}
+
+/* ══════════════════════════════════════════════════════
+   FORMULARIOS (componentes)
+══════════════════════════════════════════════════════ */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.hint {
+  margin-top: 7px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Error de validación (oculto por defecto; JS lo muestra) */
+.error {
+  display: none;
+  margin-top: 7px;
+  font-size: 0.9rem;
+  color: var(--danger);
+  font-weight: 800;
+}
+
+/* Caja de vista previa de imagen */
+.preview-box {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  text-align: center;
+  min-height: 170px;
+  display: grid;
+  place-items: center;
+  background: #fffaf4;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.preview-box:has(img) {
+  border-style: solid;
+  border-color: var(--border);
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 210px;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+/* Sección "ingredientes detectados" (bajo preview) */
+.detected-section {
+  margin-top: var(--space-md);
+}
+
+/* ══════════════════════════════════════════════════════
+   TABLA DE RECETAS
+══════════════════════════════════════════════════════ */
+.table-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+thead {
+  background: #fff1dc;
+}
+
+th,
+td {
+  padding: 15px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: #795022;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: #fffaf4;
+}
+
+.actions-cell {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* Estado vacío (sin resultados) */
+.empty-state {
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ══════════════════════════════════════════════════════
+   LISTAS DE DETALLE
+══════════════════════════════════════════════════════ */
+.ingredient-list,
+.steps-list {
+  margin-left: 20px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* ══════════════════════════════════════════════════════
+   HISTORIAL / FAVORITOS (tarjetas inline)
+══════════════════════════════════════════════════════ */
+.history-item,
+.favorite-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST (notificación flotante)
+══════════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #26221f;
+  color: #fff;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  display: none;
+  z-index: 20;
+  max-width: 320px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════
+   ESTADOS DE CARGA
+══════════════════════════════════════════════════════ */
+
+/* Contenedor de loading (oculto por defecto) */
+.loading-state {
+  display: none;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.loading-state.active {
+  display: block;
+}
+
+.loading-state p {
+  margin-top: var(--space-sm);
+  font-size: 0.95rem;
+}
+
+/* Spinner circular animado */
+.spinner {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   ESTADO DE ERROR
+══════════════════════════════════════════════════════ */
+.error-state {
+  display: none;
+  padding: 14px 18px;
+  text-align: center;
+  color: var(--danger);
+  font-weight: 700;
+  background: var(--danger-bg);
+  border-radius: var(--radius);
+  border: 1px solid rgba(192, 57, 43, 0.25);
+  margin-bottom: var(--space-md);
+}
+
+.error-state.active {
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════
+   SKELETON (filas de tabla en carga)
+══════════════════════════════════════════════════════ */
+.skeleton-row td {
+  position: relative;
+  height: 56px;
+  overflow: hidden;
+  color: transparent;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-row td::after {
+  content: "";
+  position: absolute;
+  inset: 12px 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    #f0e8de 25%,
+    #fff7ec 50%,
+    #f0e8de 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

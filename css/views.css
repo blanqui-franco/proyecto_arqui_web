@@ -1,0 +1,115 @@
+/* ═══════════════════════════════════════════════════════════
+   VIEWS — Che rembi'u
+   Estilos específicos de cada vista de la SPA.
+═══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════
+   VISTA: INICIO — Hero
+══════════════════════════════════════════════════════ */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: center;
+  min-height: 460px;
+}
+
+/* ── Mock de teléfono ─────────────────────────────────── */
+.mock-phone {
+  width: min(100%, 360px);
+  margin: 0 auto;
+  background: #26221f;
+  padding: 16px;
+  border-radius: 38px;
+  box-shadow: var(--shadow);
+}
+
+.phone-screen {
+  background: #fffaf2;
+  border-radius: 26px;
+  padding: 18px;
+  min-height: 430px;
+}
+
+.phone-title {
+  font-size: 1.1rem;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.recipe-mini {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.recipe-mini strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+/* ══════════════════════════════════════════════════════
+   VISTA: DETALLE
+══════════════════════════════════════════════════════ */
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* Definición de metadatos de la receta (dl > dt + dd) */
+.detail-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin-bottom: 4px;
+}
+
+.detail-meta dt {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.detail-meta dd {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   VISTA: FAVORITOS
+══════════════════════════════════════════════════════ */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+/* ══════════════════════════════════════════════════════
+   VISTA: HISTORIAL
+══════════════════════════════════════════════════════ */
+.timeline {
+  display: grid;
+  gap: 12px;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE ESPECÍFICO DE VISTAS
+══════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .mock-phone {
+    width: min(100%, 320px);
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}

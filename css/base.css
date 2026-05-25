@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════
+   BASE — Che rembi'u
+   Reset, body, tipografía, formularios base y utilidades.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Reset ────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Body ─────────────────────────────────────────────── */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #fff8ed 0%, #fff1dc 60%, #fefefe 100%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Tipografía ───────────────────────────────────────── */
+h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.04;
+  margin-bottom: var(--space-md);
+  color: var(--text);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+h3 {
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ── Elementos de formulario ──────────────────────────── */
+label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 7px;
+  color: var(--text);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(239, 143, 53, 0.14);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Tipo file: quitar el borde redondeado visual extra */
+input[type="file"] {
+  padding: 10px 12px;
+}
+
+/* ── Listas ───────────────────────────────────────────── */
+ul,
+ol {
+  list-style: initial;
+}
+
+/* ── Utilerías ────────────────────────────────────────── */
+
+/* Texto solo visible para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Margen superior estándar */
+.mt-md {
+  margin-top: var(--space-md);
+}
