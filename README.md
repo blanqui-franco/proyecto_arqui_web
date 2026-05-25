@@ -1,6 +1,6 @@
 # Che rembi'u 🍲
 
-**Che rembi'u** es una aplicación web orientada a sugerir recetas a partir de los ingredientes que el usuario tiene disponibles en casa. La idea principal es que el usuario pueda ingresar ingredientes manualmente o cargar una imagen de referencia, y la aplicación le muestre posibles comidas que puede preparar.
+**Che rembi'u** es una aplicación web que permite ingresar ingredientes disponibles en casa y obtener sugerencias inteligentes de recetas. En la primera etapa, la sugerencia será simulada con datos de prueba; posteriormente, el Back-End podrá integrar un servicio de IA para generar recetas a partir de los ingredientes ingresados.
 
 Este proyecto fue planteado en el contexto de la materia **Arquitectura Web**, con una división progresiva entre Front-End, Back-End e integración funcional.
 
@@ -39,44 +39,66 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 ## Funcionalidades principales
 
 - Pantalla de inicio de la aplicación.
-- Ingreso manual de ingredientes.
-- Carga de imagen con vista previa.
-- Simulación de detección de ingredientes mediante IA.
-- Grilla de recetas sugeridas con datos de prueba.
+- Ingreso manual de ingredientes disponibles.
+- Generación simulada de sugerencias de recetas.
+- Grilla de recetas con datos de prueba.
 - Filtros por:
-  - nombre o ingrediente;
+  - nombre de receta;
+  - ingrediente;
   - categoría;
   - dificultad;
   - tiempo de preparación.
 - Navegación hacia el detalle de cada receta.
 - Visualización de:
   - ingredientes necesarios;
+  - ingredientes faltantes;
   - pasos de preparación;
   - tiempo estimado;
   - dificultad;
   - porcentaje de coincidencia.
 - Gestión simulada de recetas favoritas.
 - Historial de búsquedas realizadas.
-- Almacenamiento local mediante `localStorage`.
+- Preparación para una futura integración con IA por texto.
 
 ---
 
-## Tecnologías utilizadas
+# Herramientas y tecnologías
+
+### Front-End
 
 - HTML5
 - CSS3
 - JavaScript
+- React
+- Vite
+- React Router
 - LocalStorage
-- Datos mock en memoria
+- Datos mock en formato JSON
+
+### Back-End
+
+- Node.js
+- Express.js
+- PostgreSQL
+- Prisma ORM
+- CORS
+- dotenv
+
+### Integración futura
+
+- API REST
+- JSON
+- Fetch API o Axios
+- Servicio externo de inteligencia artificial por texto
 
 ---
 
-## Estructura del prototipo
+## Integrantes
 
-El prototipo se encuentra desarrollado en un solo archivo HTML para facilitar su ejecución y revisión.
+- Diego Duarte
+- Blanca Franco
+- Matias Gaona
 
-```bash
-che-rembiu/
-│
-├── index.html
-└── README.md
+---
+
+
