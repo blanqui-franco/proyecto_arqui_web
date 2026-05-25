@@ -101,4 +101,61 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 
 ---
 
+## Etapa 1 - Micro-servicios
+
+La etapa 1 incluye tres micro-servicios Node.js + Express con datos mock en memoria:
+
+| Servicio | Puerto | Endpoints |
+|---|---:|---|
+| recipes-service | 3001 | `GET /recipes`, `GET /recipes/:id` |
+| search-service | 3002 | `POST /search` |
+| history-service | 3003 | `POST /history`, `GET /history`, `DELETE /history` |
+
+### Ejecutar con Docker
+
+Desde la raiz del proyecto:
+
+```bash
+docker compose up --build
+```
+
+Luego abrir `index.html` desde un servidor local o navegador y usar la app. El front consume:
+
+- `http://localhost:3001`
+- `http://localhost:3002`
+- `http://localhost:3003`
+
+### Pruebas rapidas de endpoints
+
+```bash
+curl http://localhost:3001/recipes
+curl http://localhost:3001/recipes/1
+curl "http://localhost:3001/recipes?category=Tradicional&maxTime=30"
+```
+
+```bash
+curl -X POST http://localhost:3002/search \
+  -H "Content-Type: application/json" \
+  -d "{\"ingredients\":[\"huevo\",\"queso Paraguay\",\"harina\",\"leche\"]}"
+```
+
+```bash
+curl -X POST http://localhost:3003/history \
+  -H "Content-Type: application/json" \
+  -d "{\"ingredients\":\"huevo, queso Paraguay\",\"results\":3}"
+
+curl http://localhost:3003/history
+curl -X DELETE http://localhost:3003/history
+```
+
+Resultados esperados:
+
+- `GET /recipes` devuelve un array con 7 recetas mock.
+- `GET /recipes/1` devuelve el detalle de Tortilla paraguaya.
+- `GET /recipes?category=Tradicional&maxTime=30` devuelve solo recetas tradicionales de hasta 30 minutos.
+- `POST /search` devuelve recetas ordenadas por mayor porcentaje de coincidencia.
+- `POST /history` devuelve el registro creado con status `201`.
+- `GET /history` devuelve los registros guardados en memoria.
+- `DELETE /history` limpia el array de historial.
+
 

@@ -1,0 +1,30 @@
+services:
+  recipes-service:
+    build:
+      context: ./services/recipes-service
+    container_name: che-rembiu-recipes-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+
+  search-service:
+    build:
+      context: .
+      dockerfile: services/search-service/Dockerfile
+    container_name: che-rembiu-search-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+    depends_on:
+      - recipes-service
+
+  history-service:
+    build:
+      context: ./services/history-service
+    container_name: che-rembiu-history-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003

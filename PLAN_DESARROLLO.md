@@ -176,22 +176,22 @@ Responsable de todos los módulos JS del navegador y de la capa de comunicación
 
 Responsable de los tres servicios y de la configuración de contenedores.
 
-- [ ] Crear `services/recipes-service/`:
+- [x] Crear `services/recipes-service/`:
   - `data.js` con el array de las 7 recetas del prototipo.
   - `index.js` con Express: endpoints `GET /recipes` (con filtros por query params) y `GET /recipes/:id`.
   - CORS habilitado.
   - `Dockerfile` basado en `node:20-alpine`.
   - `package.json`.
-- [ ] Crear `services/search-service/`:
+- [x] Crear `services/search-service/`:
   - `index.js` con Express: endpoint `POST /search` que recibe `{ ingredients: string[] }`, aplica la lógica `calculateMatch` (extraída del prototipo) y devuelve las recetas ordenadas por coincidencia.
   - `Dockerfile` y `package.json`.
-- [ ] Crear `services/history-service/`:
+- [x] Crear `services/history-service/`:
   - `index.js` con Express: `POST /history` (inserción), `GET /history` (consulta), `DELETE /history` (limpieza). Datos en memoria para Etapa 1.
   - `Dockerfile` y `package.json`.
-- [ ] Crear `docker-compose.yml` en la raíz que levante los tres servicios y exponga los puertos `3001`, `3002` y `3003`.
+- [x] Crear `docker-compose.yml` en la raíz que levante los tres servicios y exponga los puertos `3001`, `3002` y `3003`.
 - [ ] Verificar que `docker compose up` levante todo sin errores.
 - [ ] Probar cada endpoint con Postman o Insomnia y documentar los resultados.
-- [ ] Escribir instrucciones de ejecución en el `README.md`.
+- [x] Escribir instrucciones de ejecución en el `README.md`.
 
 **Entregable:** `docker compose up` levanta los tres servicios; cada endpoint responde correctamente con datos mock.
 
