@@ -1,5 +1,6 @@
 # Plan de Desarrollo — Che rembi'u 🍲
 
+
 > Aplicación web para sugerir recetas según los ingredientes disponibles en casa.  
 > Proyecto académico de la materia **Arquitectura Web**.
 
