@@ -55,7 +55,7 @@ export default function Layout({ children }) {
               <a key={l} href="#" className="text-on-surface-variant text-sm hover:text-primary transition-colors">{l}</a>
             ))}
           </div>
-          <div className="text-xs text-secondary">© 2024 Che rembi'u</div>
+          <div className="text-xs text-secondary">© 2026 Che rembi'u</div>
         </div>
       </footer>
 
