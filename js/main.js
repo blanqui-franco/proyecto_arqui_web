@@ -1,83 +1,100 @@
 /* ═══════════════════════════════════════════════════════════
    MAIN — Che rembi'u
-   Inicialización de la app y event listeners globales.
-   Carga en último lugar; todos los módulos ya están disponibles.
+   Inicialización y manejo del sistema de ingredientes.
 ═══════════════════════════════════════════════════════════ */
 
+var searchIngredients = [];
+
 document.addEventListener('DOMContentLoaded', async function () {
-  /* ── 1. Inicializar módulos ────────────────────────── */
-  initImageHandler();
 
-  /* ── 2. Cargar conteo inicial de recetas (hero stat) ─ */
+  /* ── 1. Conteo inicial de recetas (hero stat) ── */
   try {
-    const recipes = await API.getRecipes();
+    var recipes = await API.getRecipes();
     allRecipesCache = recipes;
-
-    const totalEl = document.getElementById('totalRecipes');
+    var totalEl = document.getElementById('totalRecipes');
     if (totalEl) totalEl.textContent = recipes.length;
+    renderFeaturedRecipes(recipes);
   } catch {
-    const totalEl = document.getElementById('totalRecipes');
+    var totalEl = document.getElementById('totalRecipes');
     if (totalEl) totalEl.textContent = '?';
   }
 
-  /* ── 3. Formulario de búsqueda ─────────────────────── */
-  const searchForm = document.getElementById('searchForm');
-  if (searchForm) {
-    searchForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      handleSearch();
-    });
+  /* ── 2. Input de ingredientes ── */
+  var input    = document.getElementById('ingredientInput');
+  var addBtn   = document.getElementById('addIngredientBtn');
+  var searchBtn = document.getElementById('searchBtn');
 
-    /* type="reset" limpia el form; aquí limpiamos el resto del UI */
-    searchForm.addEventListener('reset', function () {
-      const errorEl = document.getElementById('ingredientError');
-      if (errorEl) errorEl.style.display = 'none';
-
-      const detectedEl = document.getElementById('detectedIngredients');
-      if (detectedEl) {
-        detectedEl.innerHTML = '<span class="badge gray">Sin detección todavía</span>';
-      }
-
-      const previewEl = document.getElementById('imagePreview');
-      if (previewEl) {
-        previewEl.innerHTML = '<p>Subí una imagen para verla aquí.</p>';
-      }
-
-      showToast('Formulario limpiado.');
+  if (addBtn) {
+    addBtn.addEventListener('click', function () {
+      addIngredientChip(input ? input.value : '');
     });
   }
 
-  /* ── 4. Delegación de eventos para data-action ─────── */
+  if (input) {
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') addIngredientChip(input.value);
+    });
+  }
+
+  document.querySelectorAll('.suggestion-chip').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      addIngredientChip(btn.textContent.trim());
+    });
+  });
+
+  if (searchBtn) {
+    searchBtn.addEventListener('click', function () {
+      handleSearch();
+    });
+  }
+
+  /* ── 3. Hero search ── */
+  var heroBtn   = document.getElementById('heroSearchBtn');
+  var heroInput = document.getElementById('heroSearchInput');
+
+  if (heroBtn) {
+    heroBtn.addEventListener('click', function () {
+      var raw = heroInput ? heroInput.value.trim() : '';
+      if (raw) {
+        searchIngredients = [];
+        raw.split(',').forEach(function (part) { addIngredientChip(part.trim()); });
+        if (heroInput) heroInput.value = '';
+        showView('searchView');
+      } else {
+        showView('searchView');
+      }
+    });
+  }
+
+  if (heroInput) {
+    heroInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') heroBtn && heroBtn.click();
+    });
+  }
+
+  /* ── 4. Delegación de eventos data-action ── */
   document.addEventListener('click', function (e) {
-    const btn = e.target.closest('[data-action]');
+    var btn = e.target.closest('[data-action]');
     if (!btn) return;
-
     switch (btn.dataset.action) {
-      case 'simulate-detection':
-        simulateImageDetection();
-        break;
-
       case 'load-demo':
         loadDemoIngredients();
         break;
-
       case 'clear-favorites':
         clearFavorites();
         break;
-
       case 'clear-history':
         clearHistory();
         break;
-
       case 'toggle-favorite-detail':
         if (selectedRecipeId !== null) toggleFavorite(selectedRecipeId);
         break;
     }
   });
 
-  /* ── 5. Filtros de la vista Recetas ─────────────────── */
+  /* ── 5. Filtros en vista Recetas ── */
   ['textFilter', 'difficultyFilter', 'categoryFilter', 'timeFilter'].forEach(function (id) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input',  renderRecipes);
     el.addEventListener('change', renderRecipes);
@@ -85,33 +102,105 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 /* ══════════════════════════════════════════════════════
+   CHIP SYSTEM
+══════════════════════════════════════════════════════ */
+
+function addIngredientChip(val) {
+  var clean = val.trim().toLowerCase();
+  if (!clean) return;
+  if (searchIngredients.includes(clean)) {
+    showToast('Ese ingrediente ya fue agregado.');
+    return;
+  }
+  searchIngredients.push(clean);
+  _updateChipsUI();
+
+  var input = document.getElementById('ingredientInput');
+  if (input) { input.value = ''; input.focus(); }
+
+  var errEl = document.getElementById('ingredientError');
+  if (errEl) errEl.style.display = 'none';
+}
+
+function removeIngredientChip(index) {
+  searchIngredients.splice(index, 1);
+  _updateChipsUI();
+}
+
+function _updateChipsUI() {
+  var list      = document.getElementById('ingredientsList');
+  var emptyState = document.getElementById('ingredientsEmptyState');
+  var counter   = document.getElementById('ingredientCounter');
+  var searchBtn = document.getElementById('searchBtn');
+
+  if (!list) return;
+
+  /* Quitar chips existentes */
+  list.querySelectorAll('.ing-chip').forEach(function (el) { el.remove(); });
+
+  if (searchIngredients.length > 0) {
+    if (emptyState) emptyState.style.display = 'none';
+  } else {
+    if (emptyState) emptyState.style.display = '';
+  }
+
+  searchIngredients.forEach(function (ing, index) {
+    var chip = document.createElement('div');
+    chip.className = 'ing-chip chip-anim flex items-center gap-xs bg-white border border-secondary-container px-md py-sm rounded-full text-body-md text-primary shadow-sm';
+    chip.innerHTML =
+      '<span>' + ing + '</span>' +
+      '<button onclick="removeIngredientChip(' + index + ')" class="material-symbols-outlined text-outline hover:text-error transition-colors" style="font-size:18px">close</button>';
+    list.appendChild(chip);
+  });
+
+  if (counter) counter.textContent = searchIngredients.length;
+  if (searchBtn) searchBtn.disabled = searchIngredients.length === 0;
+
+  /* Actualizar barra de ingredientes activos en recipesView */
+  _updateActiveIngredientsBar();
+}
+
+function _updateActiveIngredientsBar() {
+  var bar       = document.getElementById('activeIngredientsBar');
+  var chipsArea = document.getElementById('activeIngredientChips');
+  if (!bar || !chipsArea) return;
+
+  if (searchIngredients.length > 0) {
+    bar.classList.remove('hidden');
+    chipsArea.innerHTML = searchIngredients.map(function (ing) {
+      return '<span class="inline-flex items-center gap-xs px-sm py-1 bg-primary-container text-on-primary-container rounded-full text-label-sm">' + ing + '</span>';
+    }).join('');
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+/* ══════════════════════════════════════════════════════
    BÚSQUEDA POR INGREDIENTES
 ══════════════════════════════════════════════════════ */
 
 async function handleSearch() {
-  const inputEl  = document.getElementById('ingredientsInput');
-  const errorEl  = document.getElementById('ingredientError');
-  const rawInput = inputEl ? inputEl.value : '';
+  var errEl = document.getElementById('ingredientError');
 
-  const ingredients = rawInput
-    .split(',')
-    .map(function (item) { return normalize(item); })
-    .filter(Boolean);
-
-  if (!ingredients.length) {
-    if (errorEl) errorEl.style.display = 'block';
+  if (!searchIngredients.length) {
+    if (errEl) errEl.style.display = 'block';
     return;
   }
-  if (errorEl) errorEl.style.display = 'none';
+  if (errEl) errEl.style.display = 'none';
+
+  var searchBtn = document.getElementById('searchBtn');
+  if (searchBtn) {
+    searchBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Buscando…';
+    searchBtn.disabled = true;
+  }
 
   try {
-    const results = await API.searchByIngredients(ingredients);
+    var results = await API.searchByIngredients(searchIngredients);
     visibleRecipes = results;
     recipesLoaded  = true;
 
-    /* Guardar en historial (no bloquear si falla) */
     API.saveHistory({
-      ingredients: rawInput.trim(),
+      ingredients: searchIngredients.join(', '),
       results:     results.length,
       date:        new Date().toLocaleString('es-PY')
     }).catch(function () {});
@@ -124,6 +213,11 @@ async function handleSearch() {
       'No se pudo conectar al servicio de búsqueda. ' +
       'Verificá que docker compose esté activo en el puerto 3002.'
     );
+  } finally {
+    if (searchBtn) {
+      searchBtn.innerHTML = 'Ver recetas sugeridas';
+      searchBtn.disabled = searchIngredients.length === 0;
+    }
   }
 }
 
@@ -132,20 +226,9 @@ async function handleSearch() {
 ══════════════════════════════════════════════════════ */
 
 function loadDemoIngredients() {
-  const demo = ['huevo', 'queso Paraguay', 'harina', 'leche'];
-
-  const inputEl = document.getElementById('ingredientsInput');
-  if (inputEl) inputEl.value = demo.join(', ');
-
-  const errorEl = document.getElementById('ingredientError');
-  if (errorEl) errorEl.style.display = 'none';
-
-  const detectedEl = document.getElementById('detectedIngredients');
-  if (detectedEl) {
-    detectedEl.innerHTML = demo
-      .map(function (i) { return '<span class="badge">' + i + '</span>'; })
-      .join('');
-  }
-
+  searchIngredients = [];
+  ['huevo', 'queso paraguay', 'harina', 'leche'].forEach(function (ing) {
+    addIngredientChip(ing);
+  });
   showToast('Ingredientes de ejemplo cargados.');
 }

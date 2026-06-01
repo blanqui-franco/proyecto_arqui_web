@@ -101,9 +101,70 @@ En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las rec
 
 ---
 
-## Etapa 1 - Micro-servicios
+## Cómo iniciar el proyecto
 
-La etapa 1 incluye tres micro-servicios Node.js + Express con datos mock en memoria:
+### Requisitos previos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo
+- [Node.js 20+](https://nodejs.org/) instalado
+
+---
+
+### 1. Backend (microservicios)
+
+Desde la raíz del proyecto:
+
+```bash
+# Primera vez o tras cambios en services/
+docker compose up --build -d
+
+# Las siguientes veces
+docker compose up -d
+```
+
+Verificar que los servicios estén activos:
+
+```bash
+docker compose ps
+```
+
+Para detenerlos:
+
+```bash
+docker compose down
+```
+
+---
+
+### 2. Frontend (React + Vite)
+
+```bash
+cd frontend
+
+# Solo la primera vez
+npm install
+
+# Iniciar servidor de desarrollo
+npm run dev
+```
+
+La app queda disponible en **http://localhost:5173**
+
+---
+
+### Orden recomendado
+
+```
+1. docker compose up -d        → levanta los 3 microservicios
+2. cd frontend && npm run dev  → levanta el frontend React
+3. Abrir http://localhost:5173
+```
+
+---
+
+## Microservicios
+
+Tres servicios Node.js + Express con datos mock en memoria:
 
 | Servicio | Puerto | Endpoints |
 |---|---:|---|
@@ -111,21 +172,7 @@ La etapa 1 incluye tres micro-servicios Node.js + Express con datos mock en memo
 | search-service | 3002 | `POST /search` |
 | history-service | 3003 | `POST /history`, `GET /history`, `DELETE /history` |
 
-### Ejecutar con Docker
-
-Desde la raiz del proyecto:
-
-```bash
-docker compose up --build
-```
-
-Luego abrir `index.html` desde un servidor local o navegador y usar la app. El front consume:
-
-- `http://localhost:3001`
-- `http://localhost:3002`
-- `http://localhost:3003`
-
-### Pruebas rapidas de endpoints
+### Pruebas rápidas de endpoints
 
 ```bash
 curl http://localhost:3001/recipes
@@ -148,14 +195,14 @@ curl http://localhost:3003/history
 curl -X DELETE http://localhost:3003/history
 ```
 
-Resultados esperados:
+**Resultados esperados:**
 
-- `GET /recipes` devuelve un array con 7 recetas mock.
-- `GET /recipes/1` devuelve el detalle de Tortilla paraguaya.
-- `GET /recipes?category=Tradicional&maxTime=30` devuelve solo recetas tradicionales de hasta 30 minutos.
-- `POST /search` devuelve recetas ordenadas por mayor porcentaje de coincidencia.
-- `POST /history` devuelve el registro creado con status `201`.
-- `GET /history` devuelve los registros guardados en memoria.
-- `DELETE /history` limpia el array de historial.
+- `GET /recipes` → array con 7 recetas mock
+- `GET /recipes/1` → detalle de Tortilla paraguaya
+- `GET /recipes?category=Tradicional&maxTime=30` → recetas tradicionales de hasta 30 min
+- `POST /search` → recetas ordenadas por mayor porcentaje de coincidencia
+- `POST /history` → registro creado con status `201`
+- `GET /history` → registros guardados en memoria
+- `DELETE /history` → limpia el historial
 
 

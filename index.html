@@ -1,599 +1,479 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Che rembi'u: ingresá tus ingredientes y descubrí qué podés cocinar hoy." />
   <title>Che rembi'u 🍲 — Cocinás con lo que tenés</title>
-
-  <!--
-    ╔══════════════════════════════════════╗
-    ║  CSS — orden de carga obligatorio    ║
-    ║  1. variables  (tokens de diseño)    ║
-    ║  2. base       (reset + tipografía)  ║
-    ║  3. layout     (estructura/grillas)  ║
-    ║  4. components (UI reutilizable)     ║
-    ║  5. views      (estilos por vista)   ║
-    ╚══════════════════════════════════════╝
-  -->
-  <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/views.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#316342",
+            "on-primary": "#ffffff",
+            "primary-container": "#4a7c59",
+            "on-primary-container": "#e1ffe5",
+            "secondary": "#4f6356",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#d2e8d7",
+            "on-secondary-container": "#55695c",
+            "tertiary": "#2a634a",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#447c61",
+            "on-tertiary-container": "#ddffea",
+            "surface": "#eaffeb",
+            "surface-dim": "#bde4c3",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#d6fedc",
+            "surface-container": "#d0f8d6",
+            "surface-container-high": "#caf2d1",
+            "surface-container-highest": "#c5eccb",
+            "on-surface": "#00210e",
+            "on-surface-variant": "#414942",
+            "outline": "#717971",
+            "outline-variant": "#c1c9bf",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "background": "#eaffeb",
+            "on-background": "#00210e",
+            "inverse-surface": "#153721",
+            "inverse-on-surface": "#d3fbd9",
+            "primary-fixed": "#b9efc5",
+            "on-primary-fixed": "#00210e",
+            "on-primary-fixed-variant": "#1e5031",
+            "secondary-fixed": "#d2e8d7",
+            "on-secondary-fixed": "#0d1f15",
+            "on-secondary-fixed-variant": "#384b3f",
+            "surface-variant": "#c5eccb",
+          },
+          spacing: {
+            "xs": "4px", "sm": "12px", "md": "24px",
+            "lg": "40px", "xl": "64px", "base": "8px",
+            "gutter": "24px", "container-max": "1200px",
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem", "lg": "0.5rem",
+            "xl": "0.75rem", "full": "9999px",
+          },
+          fontSize: {
+            "display-lg":        ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-lg":       ["32px", { lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "headline-lg-mobile":["24px", { lineHeight: "32px", fontWeight: "600" }],
+            "title-md":          ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "body-lg":           ["18px", { lineHeight: "28px", fontWeight: "400" }],
+            "body-md":           ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "label-sm":          ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "500" }],
+            "caption":           ["12px", { lineHeight: "16px", fontWeight: "400" }],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #EEF5F0; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    /* SPA view switching */
+    .view { display: none; }
+    .view.active { display: block; }
+    /* Loading / Error states */
+    .loading-state { display: none; flex-direction: column; align-items: center; gap: 12px; padding: 40px; }
+    .loading-state.active { display: flex; }
+    .error-state { display: none; padding: 16px; border-radius: 8px; background: #ffdad6; color: #93000a; font-size: 14px; }
+    .error-state.active { display: block; }
+    /* Spinner */
+    .spinner { width: 32px; height: 32px; border: 3px solid #c5eccb; border-top-color: #316342; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Toast */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #153721; color: #d3fbd9; padding: 12px 24px; border-radius: 9999px; font-size: 14px; z-index: 999; display: none; white-space: nowrap; }
+    /* Recipe cards */
+    .recipe-card { transition: border-color 0.2s, transform 0.2s; }
+    .recipe-card:hover { border-color: #316342 !important; transform: translateY(-3px); }
+    .flat-shadow { box-shadow: 0 4px 6px -1px rgba(43,77,53,0.06); }
+    /* Category placeholders */
+    .cat-Tradicional  { background: linear-gradient(135deg, #447c61, #2a634a); }
+    .cat-Rápida       { background: linear-gradient(135deg, #4a7c59, #316342); }
+    .cat-Económica    { background: linear-gradient(135deg, #55695c, #384b3f); }
+    .cat-Postre       { background: linear-gradient(135deg, #98d3b4, #4a7c59); }
+    .cat-default      { background: linear-gradient(135deg, #b6ccbc, #55695c); }
+    /* Chip animation */
+    @keyframes chipIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    .chip-anim { animation: chipIn 0.18s ease-out; }
+    /* Nav active link */
+    .nav-link.active { color: #316342 !important; border-bottom: 2px solid #316342; font-weight: 700; padding-bottom: 2px; }
+  </style>
 </head>
-<body>
+<body class="text-on-surface min-h-screen flex flex-col">
 
-  <!-- ═══════════════════════════════════════════ HEADER ══ -->
-  <header>
-    <div class="navbar">
+<!-- ══════════════════════════════════ HEADER ══ -->
+<header class="bg-surface sticky top-0 z-50 border-b border-outline-variant">
+  <div class="flex justify-between items-center w-full px-md py-sm max-w-container-max mx-auto h-16">
+    <button class="text-title-md font-bold text-primary hover:opacity-80 transition-opacity" data-navigate="homeView">
+      Che rembi'u 🍲
+    </button>
+    <nav class="hidden md:flex items-center gap-md" aria-label="Navegación principal">
+      <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="homeView">Inicio</span>
+      <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="searchView">Ingredientes</span>
+      <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="recipesView">Recetas</span>
+      <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="favoritesView">Favoritos</span>
+      <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="historyView">Historial</span>
+    </nav>
+    <button class="material-symbols-outlined text-primary p-2 rounded-full hover:bg-surface-variant transition-colors" aria-label="Buscar recetas" data-navigate="searchView">search</button>
+  </div>
+</header>
 
-      <!-- Marca / Logo (botón para navegar al inicio) -->
-      <button
-        class="brand"
-        data-navigate="homeView"
-        aria-label="Che rembi'u — ir al inicio"
-      >
-        <span class="brand-icon" aria-hidden="true">🍲</span>
-        <span>Che rembi'u</span>
-      </button>
+<!-- ══════════════════════════════════ MAIN ═══ -->
+<main class="flex-grow">
 
-      <!-- Navegación principal -->
-      <nav aria-label="Navegación principal">
-        <button
-          class="nav-btn active"
-          data-navigate="homeView"
-          aria-current="page"
-        >Inicio</button>
-
-        <button
-          class="nav-btn"
-          data-navigate="searchView"
-        >Ingredientes</button>
-
-        <button
-          class="nav-btn"
-          data-navigate="recipesView"
-        >Recetas</button>
-
-        <button
-          class="nav-btn"
-          data-navigate="favoritesView"
-        >Favoritos</button>
-
-        <button
-          class="nav-btn"
-          data-navigate="historyView"
-        >Historial</button>
-      </nav>
-
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: INICIO                          ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="homeView" class="view active">
+    <!-- Hero -->
+    <div class="max-w-container-max mx-auto px-md py-xl md:py-32 text-center flex flex-col items-center">
+      <div class="mb-sm">
+        <span class="bg-secondary-container text-on-secondary-fixed-variant px-md py-1 rounded-full text-label-sm">✨ Prototipo con micro-servicios</span>
+      </div>
+      <h1 class="text-headline-lg-mobile md:text-display-lg text-on-surface mb-md">¿Qué tenés en casa?</h1>
+      <p class="text-body-lg text-on-surface-variant max-w-2xl mb-lg">
+        Ingresá los ingredientes que tenés en tu heladera y te proponemos recetas paraguayas frescas y fáciles de preparar.
+      </p>
+      <div class="w-full max-w-2xl bg-surface-container-lowest rounded-xl p-xs flex flex-col md:flex-row gap-xs shadow-sm border border-outline-variant">
+        <div class="flex-1 flex items-center px-md py-sm gap-sm">
+          <span class="material-symbols-outlined text-outline">kitchen</span>
+          <input id="heroSearchInput" class="w-full border-none focus:ring-0 bg-transparent text-body-md text-on-surface placeholder-outline outline-none" placeholder="Ej: huevo, queso, harina…" type="text"/>
+        </div>
+        <button id="heroSearchBtn" class="bg-primary-container text-on-primary-container px-xl py-sm rounded-lg font-bold hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-sm active:scale-95">
+          <span>Buscar recetas</span>
+          <span class="material-symbols-outlined">auto_awesome</span>
+        </button>
+      </div>
+      <div class="mt-md flex flex-wrap justify-center gap-sm items-center">
+        <span class="text-caption text-outline">Populares ahora:</span>
+        <button class="text-caption bg-surface-container-high text-on-secondary-container px-sm py-1 rounded-full hover:bg-primary hover:text-white transition-colors" data-navigate="recipesView">Sopa paraguaya</button>
+        <button class="text-caption bg-surface-container-high text-on-secondary-container px-sm py-1 rounded-full hover:bg-primary hover:text-white transition-colors" data-navigate="recipesView">Mbeju</button>
+        <button class="text-caption bg-surface-container-high text-on-secondary-container px-sm py-1 rounded-full hover:bg-primary hover:text-white transition-colors" data-navigate="recipesView">Chipa guasú</button>
+      </div>
     </div>
-  </header>
 
-  <!-- ═══════════════════════════════════════════ MAIN ════ -->
-  <main class="container" id="mainContent">
-
-
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: INICIO                                  ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="homeView"
-      class="view active"
-      aria-labelledby="homeHeading"
-    >
-      <div class="hero">
-
-        <!-- Columna izquierda: hero card -->
-        <div class="hero-card">
-          <span class="eyebrow">✨ Prototipo Front-End con micro-servicios mock</span>
-
-          <h1 id="homeHeading">Cociná con lo que tenés en casa</h1>
-
-          <p>
-            Che rembi'u es una app web que permite ingresar ingredientes o cargar
-            una imagen para recibir sugerencias de comidas paraguayas.
-            Las recetas se obtienen desde micro-servicios con datos de prueba.
-          </p>
-
-          <div class="hero-actions">
-            <button class="btn btn-primary" data-navigate="searchView">
-              Buscar recetas
-            </button>
-            <button class="btn btn-secondary" data-navigate="recipesView">
-              Ver grilla de recetas
-            </button>
-          </div>
-
-          <!-- Estadísticas dinámicas (JS las actualiza) -->
-          <div class="stats" aria-label="Estadísticas de la aplicación">
-            <div class="stat">
-              <strong id="totalRecipes" aria-live="polite">—</strong>
-              <span>recetas</span>
-            </div>
-            <div class="stat">
-              <strong>5</strong>
-              <span>categorías</span>
-            </div>
-            <div class="stat">
-              <strong>3</strong>
-              <span>servicios</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Columna derecha: mock de teléfono (decorativo) -->
-        <div
-          class="mock-phone"
-          role="img"
-          aria-label="Vista previa de la aplicación en pantalla de celular"
-        >
-          <div class="phone-screen">
-            <span class="badge green">Sugerencia destacada</span>
-            <p class="phone-title">Tortilla paraguaya</p>
-            <p>Ideal si tenés huevo, queso, harina y leche.</p>
-
-            <div class="recipe-mini">
-              <strong>Coincidencia</strong>
-              <p>90% con tus ingredientes</p>
-              <span class="badge">25 min</span>
-              <span class="badge gray">Fácil</span>
-            </div>
-
-            <div class="recipe-mini">
-              <strong>Ingredientes detectados</strong>
-              <p>huevo, queso Paraguay, harina, leche</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: INGREDIENTES                            ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="searchView"
-      class="view"
-      aria-labelledby="searchHeading"
-    >
-      <div class="section-header">
+    <!-- Stats -->
+    <div class="bg-surface-container-lowest border-y border-outline-variant py-lg">
+      <div class="max-w-container-max mx-auto px-md grid grid-cols-3 gap-md text-center">
         <div>
-          <h2 id="searchHeading">Ingresar ingredientes</h2>
-          <p>
-            Escribí los ingredientes separados por coma o cargá una imagen
-            para simular la detección automática.
-          </p>
+          <div id="totalRecipes" class="text-display-lg text-primary font-bold">—</div>
+          <div class="text-body-md text-on-surface-variant">recetas</div>
         </div>
-        <button class="btn btn-outline" data-action="load-demo">
-          Usar ejemplo
+        <div>
+          <div class="text-display-lg text-primary font-bold">5</div>
+          <div class="text-body-md text-on-surface-variant">categorías</div>
+        </div>
+        <div>
+          <div class="text-display-lg text-primary font-bold">3</div>
+          <div class="text-body-md text-on-surface-variant">microservicios</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recetas Destacadas -->
+    <div class="max-w-container-max mx-auto px-md py-lg mb-xl">
+      <div class="flex justify-between items-end mb-lg">
+        <div>
+          <h2 class="text-headline-lg text-on-surface">Recetas Destacadas</h2>
+          <p class="text-body-md text-on-surface-variant">Platos seleccionados de nuestra colección</p>
+        </div>
+        <button class="text-primary font-bold flex items-center gap-xs hover:underline text-label-sm" data-navigate="recipesView">
+          Ver todas <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>
       </div>
+      <div id="featuredRecipesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-md">
+        <div class="text-on-surface-variant text-body-md italic col-span-3 py-lg text-center">Cargando recetas destacadas…</div>
+      </div>
+    </div>
+  </section>
 
-      <div class="grid-two">
 
-        <!-- Formulario de búsqueda -->
-        <div class="card">
-          <form id="searchForm" novalidate>
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: INGREDIENTES                    ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="searchView" class="view">
+    <div class="max-w-container-max mx-auto px-md py-lg min-h-[calc(100vh-160px)]">
+      <div class="mb-lg">
+        <h1 class="text-headline-lg text-on-surface mb-xs">¿Qué tenés en tu cocina?</h1>
+        <p class="text-body-md text-on-surface-variant">Agregá los ingredientes que tenés a mano y te sugeriremos recetas.</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 
-            <div class="form-group">
-              <label for="ingredientsInput">Ingredientes disponibles</label>
-              <textarea
-                id="ingredientsInput"
-                name="ingredients"
-                placeholder="Ejemplo: huevo, queso, harina, leche"
-                aria-describedby="ingredientsHint ingredientError"
-                aria-required="true"
-              ></textarea>
-              <p id="ingredientsHint" class="hint">
-                Los datos se envían al micro-servicio de búsqueda para calcular
-                el porcentaje de coincidencia.
-              </p>
-              <p
-                id="ingredientError"
-                class="error"
-                role="alert"
-                aria-live="assertive"
-              >
-                Debés ingresar al menos un ingrediente.
-              </p>
-            </div>
-
-            <div class="form-group">
-              <label for="imageInput">Imagen de ingredientes</label>
-              <input
-                id="imageInput"
-                type="file"
-                accept="image/*"
-                aria-describedby="imageHint"
-              />
-              <p id="imageHint" class="hint">
-                La detección por imagen es simulada en este prototipo.
-              </p>
-            </div>
-
-            <div class="hero-actions">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                data-action="search"
-              >
-                Generar sugerencias
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-action="simulate-detection"
-              >
-                Simular detección IA
-              </button>
-              <button
-                type="reset"
-                class="btn btn-outline"
-                data-action="clear-search"
-              >
-                Limpiar
+        <!-- Columna izquierda -->
+        <div class="lg:col-span-8 space-y-lg">
+          <div class="bg-surface-container-lowest border border-secondary-container rounded-xl p-md">
+            <label class="block text-label-sm text-secondary mb-base" for="ingredientInput">Agregar ingrediente</label>
+            <div class="flex gap-sm">
+              <input id="ingredientInput" class="w-full bg-[#F4F4F2] border-none focus:ring-2 focus:ring-primary rounded-lg px-md py-sm text-body-md placeholder:text-outline-variant outline-none" placeholder="Ej: Harina, Pollo, Queso…" type="text"/>
+              <button id="addIngredientBtn" class="bg-primary text-on-primary px-lg py-sm rounded-lg font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-90 flex items-center gap-xs whitespace-nowrap">
+                <span class="material-symbols-outlined">add</span> Añadir
               </button>
             </div>
-
-          </form>
-        </div>
-
-        <!-- Vista previa de imagen e ingredientes detectados -->
-        <div class="card">
-          <h3>Vista previa de imagen</h3>
-          <div
-            id="imagePreview"
-            class="preview-box"
-            aria-live="polite"
-            aria-label="Vista previa de la imagen cargada por el usuario"
-          >
-            <p>Subí una imagen para verla aquí.</p>
+            <div class="mt-lg">
+              <p class="text-label-sm text-secondary mb-base">Sugerencias rápidas</p>
+              <div class="flex flex-wrap gap-sm">
+                <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">huevo</button>
+                <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">queso Paraguay</button>
+                <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">harina</button>
+                <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">cebolla</button>
+                <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">leche</button>
+              </div>
+            </div>
           </div>
 
-          <div class="detected-section">
-            <h3>Ingredientes detectados</h3>
-            <div
-              id="detectedIngredients"
-              aria-live="polite"
-              aria-label="Ingredientes detectados por la imagen"
-            >
-              <span class="badge gray">Sin detección todavía</span>
+          <div class="space-y-base">
+            <h3 class="text-title-md text-on-surface">Mis ingredientes</h3>
+            <div id="ingredientsList" class="flex flex-wrap gap-sm min-h-[100px] p-md bg-[#EEF5F0] border-2 border-dashed border-outline-variant rounded-xl items-start content-start">
+              <div id="ingredientsEmptyState" class="text-on-surface-variant text-body-md italic w-full text-center py-md">No agregaste ingredientes todavía.</div>
             </div>
+            <p id="ingredientError" class="text-error text-label-sm" style="display:none">Debés agregar al menos un ingrediente.</p>
           </div>
         </div>
 
-      </div>
-    </section>
-
-
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: RECETAS                                 ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="recipesView"
-      class="view"
-      aria-labelledby="recipesHeading"
-    >
-      <div class="section-header">
-        <div>
-          <h2 id="recipesHeading">Recetas sugeridas</h2>
-          <p>
-            Recetas obtenidas desde el micro-servicio de recetas.
-            Podés filtrar la grilla y ver el detalle de cada una.
-          </p>
+        <!-- Columna derecha -->
+        <div class="lg:col-span-4">
+          <div class="sticky top-24 bg-surface-container-lowest border border-secondary-container rounded-xl p-md flex flex-col items-center text-center shadow-sm">
+            <div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-md">
+              <span class="material-symbols-outlined text-primary" style="font-size:36px">kitchen</span>
+            </div>
+            <h2 class="text-title-md text-on-surface mb-xs">Ingredientes ingresados</h2>
+            <div class="flex items-baseline gap-xs mb-lg">
+              <span id="ingredientCounter" class="text-headline-lg text-primary font-bold">0</span>
+              <span class="text-on-surface-variant text-body-md">elementos</span>
+            </div>
+            <button id="searchBtn" class="w-full bg-primary text-on-primary py-md px-lg rounded-xl font-bold text-title-md hover:bg-primary-container hover:text-on-primary-container transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Ver recetas sugeridas
+            </button>
+            <p class="mt-md text-caption text-outline">Agregá al menos 1 ingrediente para ver recomendaciones.</p>
+            <button class="mt-sm text-primary text-label-sm hover:underline" data-action="load-demo">
+              Usar ejemplo
+            </button>
+          </div>
         </div>
-        <button class="btn btn-primary" data-navigate="searchView">
-          Nueva búsqueda
-        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: RECETAS                         ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="recipesView" class="view">
+    <div class="max-w-container-max mx-auto px-md py-lg">
+
+      <!-- Ingredientes activos de la búsqueda -->
+      <div id="activeIngredientsBar" class="hidden bg-surface-container-lowest border border-outline-variant rounded-xl mb-md px-md py-sm">
+        <div class="flex flex-wrap items-center gap-sm">
+          <span class="text-label-sm text-on-surface-variant">Buscando con:</span>
+          <div id="activeIngredientChips" class="flex flex-wrap gap-xs"></div>
+          <button class="text-primary text-label-sm hover:underline ml-auto" data-navigate="searchView">+ Modificar</button>
+        </div>
       </div>
 
-      <!-- Filtros de búsqueda -->
-      <div
-        class="controls"
-        role="search"
-        aria-label="Filtros de recetas"
-      >
-        <input
-          id="textFilter"
-          type="search"
-          placeholder="Buscar por receta o ingrediente"
-          aria-label="Buscar por nombre de receta o ingrediente"
-        />
-
-        <select
-          id="difficultyFilter"
-          aria-label="Filtrar por dificultad"
-        >
+      <!-- Filtros -->
+      <div class="flex overflow-x-auto gap-sm pb-md items-center border-b border-outline-variant mb-lg">
+        <input id="textFilter" class="flex-shrink-0 bg-surface-container-low border-none rounded-full px-md py-xs text-body-md w-52 focus:ring-2 focus:ring-primary outline-none" placeholder="Buscar receta o ingrediente…" type="search"/>
+        <select id="difficultyFilter" class="flex-shrink-0 bg-surface-container border border-outline-variant rounded-xl px-md py-sm text-label-sm focus:ring-2 focus:ring-primary outline-none cursor-pointer">
           <option value="">Todas las dificultades</option>
           <option value="Fácil">Fácil</option>
           <option value="Media">Media</option>
         </select>
-
-        <select
-          id="categoryFilter"
-          aria-label="Filtrar por categoría"
-        >
+        <select id="categoryFilter" class="flex-shrink-0 bg-surface-container border border-outline-variant rounded-xl px-md py-sm text-label-sm focus:ring-2 focus:ring-primary outline-none cursor-pointer">
           <option value="">Todas las categorías</option>
           <option value="Tradicional">Tradicional</option>
           <option value="Rápida">Rápida</option>
           <option value="Económica">Económica</option>
           <option value="Postre">Postre</option>
         </select>
-
-        <select
-          id="timeFilter"
-          aria-label="Filtrar por tiempo de preparación"
-        >
+        <select id="timeFilter" class="flex-shrink-0 bg-surface-container border border-outline-variant rounded-xl px-md py-sm text-label-sm focus:ring-2 focus:ring-primary outline-none cursor-pointer">
           <option value="">Cualquier tiempo</option>
           <option value="15">Hasta 15 min</option>
           <option value="30">Hasta 30 min</option>
           <option value="60">Hasta 60 min</option>
         </select>
+        <button class="flex-shrink-0 flex items-center gap-xs px-md py-sm bg-primary text-on-primary rounded-xl text-label-sm font-bold hover:opacity-90 transition-colors" data-navigate="searchView">
+          <span class="material-symbols-outlined text-[20px]">add</span> Nueva búsqueda
+        </button>
       </div>
 
-      <!-- Estado de carga -->
-      <div
-        id="recipesLoading"
-        class="loading-state"
-        role="status"
-        aria-live="polite"
-        aria-label="Cargando recetas"
-      >
-        <div class="spinner" aria-hidden="true"></div>
-        <p>Cargando recetas…</p>
+      <div class="flex justify-between items-baseline mb-md">
+        <h2 class="text-headline-lg text-on-surface">Recetas sugeridas</h2>
+        <span id="recipesCount" class="text-on-surface-variant text-body-md"></span>
       </div>
 
-      <!-- Estado de error -->
-      <div
-        id="recipesError"
-        class="error-state"
-        role="alert"
-        aria-live="assertive"
-      ></div>
-
-      <!-- Tabla de recetas -->
-      <div class="table-wrapper" id="recipesTableWrapper">
-        <table aria-label="Lista de recetas sugeridas">
-          <thead>
-            <tr>
-              <th scope="col">Receta</th>
-              <th scope="col">Categoría</th>
-              <th scope="col">Tiempo</th>
-              <th scope="col">Dificultad</th>
-              <th scope="col">Coincidencia</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody
-            id="recipesTableBody"
-            aria-live="polite"
-            aria-relevant="additions removals"
-          ></tbody>
-        </table>
-
-        <p
-          id="emptyRecipes"
-          class="empty-state"
-          role="status"
-          hidden
-        >
-          No se encontraron recetas para los filtros seleccionados.
-        </p>
+      <div id="recipesLoading" class="loading-state" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p class="text-on-surface-variant">Cargando recetas…</p>
       </div>
-    </section>
+      <div id="recipesError" class="error-state mb-md" role="alert" aria-live="assertive"></div>
+
+      <div id="recipesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter"></div>
+      <p id="emptyRecipes" class="text-center text-on-surface-variant py-xl italic" style="display:none">No se encontraron recetas para los filtros seleccionados.</p>
+    </div>
+  </section>
 
 
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: DETALLE DE RECETA                       ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="detailView"
-      class="view"
-      aria-labelledby="detailTitle"
-    >
-      <div class="section-header">
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: DETALLE DE RECETA               ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="detailView" class="view">
+    <div class="max-w-container-max mx-auto px-md py-lg">
+
+      <div class="mb-md flex items-center gap-xs text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-navigate="recipesView">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <span class="text-label-sm">Volver a Recetas</span>
+      </div>
+
+      <div id="detailLoading" class="loading-state" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p class="text-on-surface-variant">Cargando detalle…</p>
+      </div>
+      <div id="detailError" class="error-state mb-md" role="alert" aria-live="assertive"></div>
+
+      <div id="detailContent" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+        <!-- Columna izquierda: imagen + meta -->
+        <section class="lg:col-span-5 space-y-md">
+          <div class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant flat-shadow">
+            <div id="detailImagePlaceholder" class="w-full aspect-square flex items-center justify-center cat-default">
+              <span class="material-symbols-outlined text-white opacity-50" style="font-size:80px">restaurant</span>
+            </div>
+            <div class="p-md space-y-md">
+              <div class="flex justify-between items-start gap-sm">
+                <div class="flex-1 min-w-0">
+                  <h1 id="detailTitle" class="text-headline-lg text-on-surface truncate"></h1>
+                  <p id="detailDescription" class="text-body-md text-on-surface-variant mt-xs"></p>
+                </div>
+                <span id="detailMatchBadge" class="bg-primary-container text-on-primary-container px-sm py-xs rounded-full text-label-sm flex items-center gap-xs whitespace-nowrap flex-shrink-0">
+                  <span class="material-symbols-outlined" style="font-size:14px">verified</span>
+                  <span id="detailMatch"></span>%
+                </span>
+              </div>
+              <div class="grid grid-cols-3 gap-xs border-y border-outline-variant py-md">
+                <div class="text-center">
+                  <span class="material-symbols-outlined text-primary block mb-xs">schedule</span>
+                  <span id="detailTime" class="text-label-sm block"></span>
+                </div>
+                <div class="text-center border-x border-outline-variant">
+                  <span class="material-symbols-outlined text-primary block mb-xs">bar_chart</span>
+                  <span id="detailDifficulty" class="text-label-sm block"></span>
+                </div>
+                <div class="text-center">
+                  <span class="material-symbols-outlined text-primary block mb-xs">category</span>
+                  <span id="detailCategory" class="text-label-sm block"></span>
+                </div>
+              </div>
+              <button id="favoriteDetailButton" class="w-full bg-primary text-on-primary py-sm rounded-lg font-bold text-title-md flex justify-center items-center gap-sm hover:opacity-90 transition-all active:scale-95" data-action="toggle-favorite-detail">
+                <span class="material-symbols-outlined">favorite</span>
+                Guardar en favoritos
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Columna derecha: ingredientes + pasos + historia -->
+        <section class="lg:col-span-7 space-y-lg">
+          <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant flat-shadow">
+            <h2 class="text-headline-lg text-on-surface mb-md">Ingredientes</h2>
+            <ul id="detailIngredients" class="space-y-sm" aria-label="Ingredientes de la receta"></ul>
+          </div>
+          <div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant flat-shadow">
+            <h2 class="text-headline-lg text-on-surface mb-md">Pasos de preparación</h2>
+            <div id="detailSteps" class="space-y-md"></div>
+          </div>
+          <div id="detailHistoryCard" class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant flat-shadow">
+            <h2 class="text-headline-lg text-on-surface mb-md flex items-center gap-sm">
+              <span class="material-symbols-outlined text-primary">auto_stories</span>
+              Historia tradicional
+            </h2>
+            <p id="detailHistory" class="text-body-md text-on-surface-variant leading-relaxed"></p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: FAVORITOS                       ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="favoritesView" class="view">
+    <div class="max-w-container-max mx-auto px-md py-lg">
+      <div class="flex flex-col md:flex-row justify-between items-baseline mb-lg gap-sm">
         <div>
-          <h2 id="detailTitle">Detalle de receta</h2>
-          <p id="detailDescription">
-            Información ampliada de la receta seleccionada.
-          </p>
+          <h1 class="text-headline-lg text-on-surface">Mis recetas favoritas</h1>
+          <p id="favoritesCount" class="text-on-surface-variant text-body-md mt-xs"></p>
         </div>
-        <div class="hero-actions">
-          <button class="btn btn-outline" data-navigate="recipesView">
-            Volver a la grilla
-          </button>
-          <button
-            id="favoriteDetailButton"
-            class="btn btn-secondary"
-            data-action="toggle-favorite-detail"
-            aria-label="Guardar esta receta en favoritos"
-          >
-            Guardar favorito
-          </button>
-        </div>
-      </div>
-
-      <!-- Estado de carga -->
-      <div
-        id="detailLoading"
-        class="loading-state"
-        role="status"
-        aria-live="polite"
-        aria-label="Cargando detalle de receta"
-      >
-        <div class="spinner" aria-hidden="true"></div>
-        <p>Cargando detalle…</p>
-      </div>
-
-      <!-- Estado de error -->
-      <div
-        id="detailError"
-        class="error-state"
-        role="alert"
-        aria-live="assertive"
-      ></div>
-
-      <!-- Contenido del detalle -->
-      <div id="detailContent" class="detail-layout">
-
-        <!-- Pasos de preparación -->
-        <div class="card">
-          <h3>Pasos de preparación</h3>
-          <ol
-            id="detailSteps"
-            class="steps-list"
-            aria-label="Pasos de preparación de la receta"
-          ></ol>
-        </div>
-
-        <!-- Datos y lista de ingredientes -->
-        <div class="card">
-          <h3>Datos principales</h3>
-          <dl class="detail-meta">
-            <dt>Tiempo</dt>
-            <dd id="detailTime"></dd>
-
-            <dt>Dificultad</dt>
-            <dd id="detailDifficulty"></dd>
-
-            <dt>Categoría</dt>
-            <dd id="detailCategory"></dd>
-
-            <dt>Coincidencia</dt>
-            <dd><span id="detailMatch"></span>%</dd>
-          </dl>
-
-          <h3 class="mt-md">Ingredientes</h3>
-          <ul
-            id="detailIngredients"
-            class="ingredient-list"
-            aria-label="Ingredientes necesarios para la receta"
-          ></ul>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: FAVORITOS                               ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="favoritesView"
-      class="view"
-      aria-labelledby="favoritesHeading"
-    >
-      <div class="section-header">
-        <div>
-          <h2 id="favoritesHeading">Recetas favoritas</h2>
-          <p>Listado de recetas guardadas por el usuario.</p>
-        </div>
-        <button class="btn btn-outline" data-action="clear-favorites">
+        <button class="flex items-center gap-xs text-error text-label-sm hover:bg-error-container px-4 py-2 rounded-lg transition-colors" data-action="clear-favorites">
+          <span class="material-symbols-outlined">delete_sweep</span>
           Vaciar favoritos
         </button>
       </div>
-
-      <div
-        id="favoritesList"
-        class="favorites-grid"
-        aria-live="polite"
-        aria-label="Lista de recetas favoritas"
-      ></div>
-    </section>
+      <div id="favoritesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter" aria-live="polite"></div>
+    </div>
+  </section>
 
 
-    <!-- ╔══════════════════════════════════════════════════╗
-         ║  VISTA: HISTORIAL                               ║
-         ╚══════════════════════════════════════════════════╝ -->
-    <section
-      id="historyView"
-      class="view"
-      aria-labelledby="historyHeading"
-    >
-      <div class="section-header">
+  <!-- ╔══════════════════════════════════════════╗
+       ║  VISTA: HISTORIAL                       ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="historyView" class="view">
+    <div class="max-w-container-max mx-auto px-md py-lg">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
         <div>
-          <h2 id="historyHeading">Historial de búsquedas</h2>
-          <p>Registro de las últimas búsquedas realizadas.</p>
+          <h1 class="text-headline-lg text-on-surface">Historial de búsquedas</h1>
+          <p class="text-body-md text-on-surface-variant mt-xs">Revisá tus exploraciones culinarias anteriores.</p>
         </div>
-        <button class="btn btn-outline" data-action="clear-history">
+        <button class="flex items-center gap-xs text-error text-label-sm hover:bg-error-container px-4 py-2 rounded-lg transition-colors" data-action="clear-history">
+          <span class="material-symbols-outlined">delete_sweep</span>
           Limpiar historial
         </button>
       </div>
-
-      <!-- Estado de carga -->
-      <div
-        id="historyLoading"
-        class="loading-state"
-        role="status"
-        aria-live="polite"
-        aria-label="Cargando historial"
-      >
-        <div class="spinner" aria-hidden="true"></div>
-        <p>Cargando historial…</p>
+      <div id="historyLoading" class="loading-state" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p class="text-on-surface-variant">Cargando historial…</p>
       </div>
+      <div id="historyError" class="error-state mb-md" role="alert" aria-live="assertive"></div>
+      <div id="historyList" class="flex flex-col gap-md" aria-live="polite"></div>
+    </div>
+  </section>
 
-      <!-- Estado de error -->
-      <div
-        id="historyError"
-        class="error-state"
-        role="alert"
-        aria-live="assertive"
-      ></div>
+</main>
 
-      <div
-        id="historyList"
-        class="timeline"
-        aria-live="polite"
-        aria-label="Historial de búsquedas realizadas"
-      ></div>
-    </section>
+<!-- ══════════════════════════════════ FOOTER ══ -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-md py-lg max-w-container-max mx-auto gap-lg">
+    <div class="flex flex-col items-center md:items-start gap-xs">
+      <span class="text-title-md font-bold text-secondary">Che rembi'u 🍲</span>
+      <p class="text-caption text-on-surface-variant">© 2024 Che rembi'u</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-xl">
+      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sobre Nosotros</a>
+      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contacto</a>
+      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacidad</a>
+    </div>
+  </div>
+</footer>
 
+<!-- Toast -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  </main><!-- /main.container -->
-
-
-  <!-- ═══════════════════════════════════════ TOAST ═══════ -->
-  <!--
-    Notificación flotante.
-    JS muestra/oculta este elemento y escribe el mensaje.
-    role="status" + aria-live="polite" → lectura no interrumpida.
-  -->
-  <div
-    id="toast"
-    class="toast"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-  ></div>
-
-
-  <!-- ═══════════════════════════════════════ SCRIPTS ═════ -->
-  <!--
-    Orden de carga (sin ES modules; dependencias implícitas):
-      1. api       → fetch a los micro-servicios
-      2. storage   → wrappers de localStorage
-      3. toast     → showToast()
-      4. filters   → normalize()
-      5. router    → showView(), bind data-navigate
-      6. imageHandler → FileReader, preview, simulateDetection
-      7. recipes   → renderRecipes(), openRecipeDetail()
-      8. favorites → toggleFavorite(), renderFavorites()
-      9. history   → renderHistory(), clearHistory()
-     10. main      → init, event listeners globales (data-action)
-  -->
-  <script src="js/api.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/toast.js"></script>
-  <script src="js/filters.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/imageHandler.js"></script>
-  <script src="js/recipes.js"></script>
-  <script src="js/favorites.js"></script>
-  <script src="js/history.js"></script>
-  <script src="js/main.js"></script>
-
+<!-- Scripts -->
+<script src="js/api.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/router.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/history.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
