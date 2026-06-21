@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3004;
 
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    if (!origin || origin === 'null' || /^http:\/\/localhost(:\d+)?$/.test(origin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) {
       callback(null, true);
       return;
     }
@@ -45,7 +45,7 @@ app.post('/vision', async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     const result = await model.generateContent([
       {
