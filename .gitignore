@@ -1,0 +1,25 @@
+# ── Documentación interna (no va al repo) ─────────────────
+PLAN_DESARROLLO.md
+
+# ── Dependencias ───────────────────────────────────────────
+node_modules/
+**/node_modules/
+
+# ── Variables de entorno (nunca subir credenciales) ────────
+.env
+.env.local
+.env.*.local
+
+# ── Datos de volumen Docker local ──────────────────────────
+postgres-data/
+
+# ── Sistema operativo ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editores ───────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user

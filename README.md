@@ -1,208 +1,233 @@
 # Che rembi'u 🍲
 
-**Che rembi'u** es una aplicación web que permite ingresar ingredientes disponibles en casa y obtener sugerencias inteligentes de recetas. En la primera etapa, la sugerencia será simulada con datos de prueba; posteriormente, el Back-End podrá integrar un servicio de IA para generar recetas a partir de los ingredientes ingresados.
+Aplicación web con identidad paraguaya que sugiere recetas a partir de los ingredientes que el usuario tiene disponibles en casa.
 
-Este proyecto fue planteado en el contexto de la materia **Arquitectura Web**, con una división progresiva entre Front-End, Back-End e integración funcional.
+> "Tengo estos ingredientes, ¿qué puedo cocinar?"
 
----
-
-## Objetivo del proyecto
-
-Desarrollar una aplicación web simple, útil y con identidad paraguaya, que permita al usuario encontrar recetas a partir de ingredientes disponibles.
-
-La aplicación busca responder a la pregunta:
-
-> “Tengo estos ingredientes en casa, ¿qué puedo cocinar?”
-
----
-
-## Alcance académico
-
-El proyecto se divide en tres etapas:
-
-| Etapa | Alcance |
-|---|---|
-| Segundo Parcial | Desarrollo Front-End con datos de prueba |
-| Primer Final | Desarrollo Back-End con API y base de datos |
-| Segundo Final | Integración funcional entre Front-End y Back-End |
-
----
-
-## Alcance del prototipo actual
-
-La versión actual corresponde al **prototipo Front-End**.
-
-En esta etapa no se utiliza una IA real ni conexión con Back-End. Todas las recetas, sugerencias y respuestas se trabajan mediante datos de prueba dentro del navegador.
-
----
-
-## Funcionalidades principales
-
-- Pantalla de inicio de la aplicación.
-- Ingreso manual de ingredientes disponibles.
-- Generación simulada de sugerencias de recetas.
-- Grilla de recetas con datos de prueba.
-- Filtros por:
-  - nombre de receta;
-  - ingrediente;
-  - categoría;
-  - dificultad;
-  - tiempo de preparación.
-- Navegación hacia el detalle de cada receta.
-- Visualización de:
-  - ingredientes necesarios;
-  - ingredientes faltantes;
-  - pasos de preparación;
-  - tiempo estimado;
-  - dificultad;
-  - porcentaje de coincidencia.
-- Gestión simulada de recetas favoritas.
-- Historial de búsquedas realizadas.
-- Preparación para una futura integración con IA por texto.
-
----
-
-# Herramientas y tecnologías
-
-### Front-End
-
-- HTML5
-- CSS3
-- JavaScript
-- React
-- Vite
-- React Router
-- LocalStorage
-- Datos mock en formato JSON
-
-### Back-End
-
-- Node.js
-- Express.js
-- PostgreSQL
-- Prisma ORM
-- CORS
-- dotenv
-
-### Integración futura
-
-- API REST
-- JSON
-- Fetch API o Axios
-- Servicio externo de inteligencia artificial por texto
+Proyecto académico — materia **Arquitectura Web**.
 
 ---
 
 ## Integrantes
 
-- Diego Duarte
-- Blanca Franco
-- Matias Gaona
+| Nombre | Rol principal |
+|---|---|
+| Matias Gaona | Infraestructura, BD, Docker |
+| Diego Duarte | Micro-servicios, IA |
+| Blanca Franco | Front-End, integración |
 
 ---
 
-## Cómo iniciar el proyecto
+## Estado actual
 
-### Requisitos previos
+| Componente | Estado |
+|---|---|
+| Front-End estructurado (HTML + CSS + JS) | ✅ Completo |
+| Micro-servicios con datos mock | ✅ Funcionando |
+| PostgreSQL con schema y seed | ✅ Listo |
+| Servicios conectados a BD real | 🔲 En desarrollo |
+| IA: reconocimiento de imagen (Gemini) | 🔲 Pendiente |
+| IA: sugerencia de recetas (Gemini) | 🔲 Pendiente |
+
+---
+
+## Etapas académicas
+
+| Etapa | Entrega | Objetivo |
+|---|---|---|
+| **Etapa 1** | Segundo Parcial | Front-End estructurado + micro-servicios con datos mock |
+| **Etapa 2** | Primer Final | BD real + IA con Gemini + integración completa |
+
+---
+
+## Funcionalidades
+
+- Ingreso manual de ingredientes.
+- Carga de imagen con detección de ingredientes *(mock en Etapa 1, Gemini Vision en Etapa 2)*.
+- Sugerencia de recetas por porcentaje de coincidencia.
+- Sugerencia razonada por IA *(Gemini en Etapa 2)*.
+- Grilla de recetas con filtros por nombre, categoría, dificultad y tiempo.
+- Vista de detalle: ingredientes, pasos, tiempo, dificultad y % de coincidencia.
+- Recetas favoritas *(localStorage)*.
+- Historial de búsquedas *(localStorage en Etapa 1, BD en Etapa 2)*.
+
+---
+
+## Tecnologías
+
+### Front-End
+- HTML5 + CSS3 (archivos separados por responsabilidad)
+- JavaScript vanilla (módulos separados por funcionalidad)
+- LocalStorage (favoritos)
+
+### Back-End (micro-servicios)
+- Node.js 20 + Express
+- PostgreSQL 16
+- `pg` (node-postgres)
+- Docker + Docker Compose
+
+### Inteligencia Artificial *(Etapa 2)*
+- Google Gemini API (`gemini-2.0-flash`) — gratuita
+- Reconocimiento de imagen (visión)
+- Sugerencia de recetas con contexto de BD
+
+---
+
+## Requisitos previos
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo
-- [Node.js 20+](https://nodejs.org/) instalado
+- Para el front-end: VS Code con extensión **Live Server**, o `npx serve`
 
 ---
 
-### 1. Backend (microservicios)
+## Cómo correr el proyecto
 
-Desde la raíz del proyecto:
+### 1. Variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+> En Etapa 2 también agregar `GEMINI_API_KEY=tu_clave` al `.env`.  
+> Obtener clave gratuita en [aistudio.google.com](https://aistudio.google.com).
+
+### 2. Levantar los servicios y la base de datos
 
 ```bash
 # Primera vez o tras cambios en services/
-docker compose up --build -d
+docker compose up --build
 
 # Las siguientes veces
-docker compose up -d
+docker compose up
 ```
 
-Verificar que los servicios estén activos:
+Verificar que todo esté activo:
 
 ```bash
 docker compose ps
 ```
 
-Para detenerlos:
+Detener:
 
 ```bash
 docker compose down
 ```
 
----
+### 3. Servir el front-end
 
-### 2. Frontend (React + Vite)
+**Opción A — Live Server (VS Code):**
+Click derecho sobre `index.html` → *Open with Live Server*
 
+**Opción B — terminal:**
 ```bash
-cd frontend
-
-# Solo la primera vez
-npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
+npx serve .
 ```
 
-La app queda disponible en **http://localhost:5173**
-
----
+La app queda disponible en **http://localhost:5500** (Live Server) o **http://localhost:3000** (`npx serve`).
 
 ### Orden recomendado
 
 ```
-1. docker compose up -d        → levanta los 3 microservicios
-2. cd frontend && npm run dev  → levanta el frontend React
-3. Abrir http://localhost:5173
+1. docker compose up       → PostgreSQL + micro-servicios
+2. Live Server o npx serve → front-end
+3. Abrir http://localhost:5500
 ```
 
 ---
 
-## Microservicios
+## Micro-servicios
 
-Tres servicios Node.js + Express con datos mock en memoria:
+| Servicio | Puerto | Descripción |
+|---|---|---|
+| `recipes-service` | `3001` | Consulta de recetas con filtros |
+| `search-service` | `3002` | Búsqueda por ingredientes con % de coincidencia |
+| `history-service` | `3003` | Historial de búsquedas |
+| `vision-service` | `3004` | Reconocimiento de ingredientes en imagen *(Etapa 2)* |
+| `suggestion-service` | `3005` | Sugerencia razonada de recetas con Gemini *(Etapa 2)* |
 
-| Servicio | Puerto | Endpoints |
-|---|---:|---|
-| recipes-service | 3001 | `GET /recipes`, `GET /recipes/:id` |
-| search-service | 3002 | `POST /search` |
-| history-service | 3003 | `POST /history`, `GET /history`, `DELETE /history` |
+---
 
-### Pruebas rápidas de endpoints
+## Endpoints
+
+### recipes-service — `http://localhost:3001`
 
 ```bash
+# Todas las recetas
 curl http://localhost:3001/recipes
+
+# Con filtros
+curl "http://localhost:3001/recipes?category=Tradicional&difficulty=Fácil&maxTime=30"
+
+# Detalle de una receta
 curl http://localhost:3001/recipes/1
-curl "http://localhost:3001/recipes?category=Tradicional&maxTime=30"
+
+# Estado del servicio
+curl http://localhost:3001/health
 ```
+
+### search-service — `http://localhost:3002`
 
 ```bash
 curl -X POST http://localhost:3002/search \
   -H "Content-Type: application/json" \
-  -d "{\"ingredients\":[\"huevo\",\"queso Paraguay\",\"harina\",\"leche\"]}"
+  -d '{"ingredients":["huevo","queso","harina","leche"]}'
 ```
 
+### history-service — `http://localhost:3003`
+
 ```bash
+# Guardar búsqueda
 curl -X POST http://localhost:3003/history \
   -H "Content-Type: application/json" \
-  -d "{\"ingredients\":\"huevo, queso Paraguay\",\"results\":3}"
+  -d '{"ingredients":"huevo, queso","results":3}'
 
+# Ver historial
 curl http://localhost:3003/history
+
+# Limpiar historial
 curl -X DELETE http://localhost:3003/history
 ```
 
-**Resultados esperados:**
+### vision-service — `http://localhost:3004` *(Etapa 2)*
 
-- `GET /recipes` → array con 7 recetas mock
-- `GET /recipes/1` → detalle de Tortilla paraguaya
-- `GET /recipes?category=Tradicional&maxTime=30` → recetas tradicionales de hasta 30 min
-- `POST /search` → recetas ordenadas por mayor porcentaje de coincidencia
-- `POST /history` → registro creado con status `201`
-- `GET /history` → registros guardados en memoria
-- `DELETE /history` → limpia el historial
+```bash
+curl -X POST http://localhost:3004/vision \
+  -H "Content-Type: application/json" \
+  -d '{"image":"<base64 de la imagen>"}'
+# Respuesta: { "ingredients": ["huevo", "queso", "cebolla"] }
+```
 
+### suggestion-service — `http://localhost:3005` *(Etapa 2)*
 
+```bash
+curl -X POST http://localhost:3005/suggest \
+  -H "Content-Type: application/json" \
+  -d '{"ingredients":["huevo","queso","harina"]}'
+# Respuesta: { "suggestion": "Con esos ingredientes podés hacer una tortilla paraguaya..." }
+```
+
+---
+
+## Base de datos
+
+Conexión desde DBeaver u otro cliente SQL:
+
+| Campo | Valor |
+|---|---|
+| Host | `localhost` |
+| Puerto | `5432` |
+| Base de datos | `che_rembiu` |
+| Usuario | `cheuser` |
+| Contraseña | `chepass` |
+
+Tablas creadas al levantar el contenedor:
+- `recipes` — recetas
+- `ingredients` — catálogo de ingredientes
+- `recipe_ingredients` — relación N:N
+- `recipe_steps` — pasos de preparación
+- `search_history` — historial de búsquedas
+
+Verificar datos desde consola:
+```bash
+docker exec -it che-rembiu-postgres psql -U cheuser -d che_rembiu -c "SELECT name FROM recipes;"
+```
