@@ -14,8 +14,10 @@
 | Micro-servicios con datos mock | ✅ Completo |
 | Docker (3 servicios levantando) | ✅ Funcionando |
 | Infraestructura BD (schema + seed + docker-compose) | ✅ Completo |
-| Servicios conectados a PostgreSQL | 🔲 Pendiente |
-| Servicios IA con Gemini | 🔲 Pendiente |
+| `recipes-service` y `search-service` → PostgreSQL | ✅ Completo |
+| `history-service` → PostgreSQL | 🔲 Pendiente (Integrante 3) |
+| `vision-service` (Gemini Vision) | ✅ Completo |
+| `suggestion-service` (Gemini texto) | 🔲 Pendiente (Integrante 3) |
 
 ---
 
@@ -254,39 +256,40 @@ proyecto_arqui_web/
 ├── services/
 │   ├── recipes-service/
 │   │   ├── db.js               ✅ pool pg
-│   │   ├── index.js            🔲 migrar a queries SQL
+│   │   ├── index.js            ✅ migrado a queries SQL (Integrante 2)
 │   │   ├── package.json        ✅ incluye "pg"
 │   │   └── Dockerfile
 │   │
 │   ├── search-service/
 │   │   ├── db.js               ✅ pool pg
-│   │   ├── index.js            🔲 migrar a queries SQL
+│   │   ├── index.js            ✅ migrado a queries SQL (Integrante 2)
 │   │   ├── package.json        ✅ incluye "pg"
-│   │   └── Dockerfile
+│   │   └── Dockerfile          ✅ actualizado (Integrante 2)
 │   │
 │   ├── history-service/
 │   │   ├── db.js               ✅ pool pg
-│   │   ├── index.js            🔲 migrar a INSERT/SELECT
+│   │   ├── index.js            🔲 migrar a INSERT/SELECT (Integrante 3)
 │   │   ├── package.json        ✅ incluye "pg"
 │   │   └── Dockerfile
 │   │
-│   ├── vision-service/         🔲 NUEVO
-│   │   ├── index.js            ← Express + Gemini Vision API
-│   │   ├── package.json        ← dependencias: express, cors, @google/generative-ai
-│   │   └── Dockerfile
+│   ├── vision-service/         ✅ CREADO (Integrante 2)
+│   │   ├── index.js            ✅ Express + Gemini Vision API
+│   │   ├── package.json        ✅ express, cors, @google/generative-ai
+│   │   └── Dockerfile          ✅
 │   │
-│   └── suggestion-service/     🔲 NUEVO
+│   └── suggestion-service/     🔲 NUEVO (Integrante 3)
 │       ├── index.js            ← Express + Gemini text + contexto de BD
 │       ├── db.js               ← pool pg para consultar recetas
 │       ├── package.json        ← express, cors, @google/generative-ai, pg
 │       └── Dockerfile
 │
 ├── js/
-│   └── api.js                  🔲 agregar llamadas a vision-service y suggestion-service
+│   ├── api.js                  ✅ detectIngredients() agregado (Integrante 2)
+│   └── imageHandler.js         ✅ usa API real en lugar de simulación (Integrante 2)
 │
-├── docker-compose.yml          ✅ (postgres + red interna + 3 servicios)
-│                               🔲 agregar vision-service y suggestion-service
-├── .env.example                ✅
+├── docker-compose.yml          ✅ vision-service agregado (Integrante 2)
+│                               🔲 agregar suggestion-service (Integrante 1/3)
+├── .env.example                ✅ GEMINI_API_KEY agregado (Integrante 2)
 └── .gitignore                  ✅
 ```
 
@@ -303,8 +306,9 @@ proyecto_arqui_web/
 - [x] Crear `db.js` en los tres servicios existentes.
 - [x] Agregar `"pg"` a los tres `package.json`.
 - [ ] Obtener API key de Google Gemini (gratuita en aistudio.google.com).
-- [ ] Agregar `GEMINI_API_KEY` a `.env.example`.
-- [ ] Actualizar `docker-compose.yml` para agregar `vision-service` (puerto `3004`) y `suggestion-service` (puerto `3005`) con la variable `GEMINI_API_KEY`.
+- [x] Agregar `GEMINI_API_KEY` a `.env.example`. *(realizado por Integrante 2)*
+- [x] Actualizar `docker-compose.yml` para agregar `vision-service` (puerto `3004`) con la variable `GEMINI_API_KEY`. *(realizado por Integrante 2)*
+- [ ] Actualizar `docker-compose.yml` para agregar `suggestion-service` (puerto `3005`).
 - [ ] Verificar que `docker compose up --build` levante los 5 servicios + PostgreSQL.
 - [ ] Prueba final de punta a punta: imagen → detección → búsqueda → sugerencia IA → historial persistente.
 
@@ -314,20 +318,21 @@ proyecto_arqui_web/
 
 #### 🧑‍💻 Integrante 2 — `recipes-service`, `search-service` y `vision-service`
 
-- [ ] Actualizar `recipes-service/index.js` para usar BD:
-  - `GET /recipes`: query SQL con `WHERE` dinámicos + JOIN a `ingredients`.
-  - `GET /recipes/:id`: JOIN a `recipe_steps` e `ingredients`.
-  - Eliminar `require('./data')`.
-- [ ] Actualizar `search-service/index.js` para usar BD:
-  - `POST /search`: calcular match % con JOINs en BD, ordenar de mayor a menor, excluir con match 0.
-  - Eliminar `require('./data')`.
-- [ ] Crear `services/vision-service/`:
-  - `index.js`: recibe imagen en base64, llama a Gemini Vision con prompt `"Lista los ingredientes de comida que ves en esta imagen. Responde solo con una lista de nombres en español, separados por comas."`, devuelve `{ ingredients: string[] }`.
+- [x] Actualizar `recipes-service/index.js` para usar BD:
+  - `GET /recipes`: query SQL con `WHERE` dinámicos + EXISTS sobre `ingredients`.
+  - `GET /recipes/:id`: subqueries correlacionadas a `recipe_steps` e `ingredients`.
+  - Eliminado `require('./data')`.
+- [x] Actualizar `search-service/index.js` para usar BD:
+  - `POST /search`: obtiene recetas con ingredientes desde BD, calcula match % y ordena de mayor a menor, excluye match 0.
+  - Eliminado `require('./data')`.
+  - Actualizado `Dockerfile` (ya no depende del contexto raíz).
+- [x] Crear `services/vision-service/`:
+  - `index.js`: recibe imagen en base64 o data URL, llama a `gemini-2.0-flash` Vision con el prompt indicado, devuelve `{ ingredients: string[] }`.
   - `package.json` con `express`, `cors`, `@google/generative-ai`.
   - `Dockerfile`.
-- [ ] Actualizar `js/api.js` para agregar:
+- [x] Actualizar `js/api.js` para agregar:
   - `detectIngredients(base64)` → `POST vision-service/vision`
-- [ ] Actualizar `js/imageHandler.js` para llamar a `API.detectIngredients()` en lugar de la simulación.
+- [x] Actualizar `js/imageHandler.js`: reemplazada `simulateImageDetection` por `detectIngredientsFromImage()` async que llama a `API.detectIngredients()`.
 - [ ] Probar con Postman: `POST http://localhost:3004/vision` con una imagen en base64.
 
 **Entregable:** recetas y búsqueda desde BD; reconocimiento real de ingredientes por imagen vía Gemini.
@@ -368,10 +373,10 @@ proyecto_arqui_web/
 
 ### Etapa 2
 - [ ] `docker compose up --build` levanta PostgreSQL + 5 micro-servicios sin errores.
-- [ ] `GET /recipes` y `GET /recipes/:id` devuelven datos reales desde la BD.
-- [ ] `POST /search` calcula match % con JOINs en PostgreSQL.
+- [x] `GET /recipes` y `GET /recipes/:id` devuelven datos reales desde la BD.
+- [x] `POST /search` calcula match % con datos de PostgreSQL.
 - [ ] `POST /history` inserta en BD; historial persiste al recargar.
-- [ ] `POST /vision` identifica ingredientes reales desde una imagen.
+- [x] `POST /vision` identifica ingredientes reales desde una imagen.
 - [ ] `POST /suggest` devuelve una sugerencia razonada de Gemini.
 - [ ] El front-end funciona de punta a punta sin datos hardcodeados.
 - [ ] Todos los endpoints documentados en `README.md`.

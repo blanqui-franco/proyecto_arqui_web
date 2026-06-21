@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const recipes = require('./data');
+const pool = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,53 +16,110 @@ app.use(cors({
 }));
 app.use(express.json());
 
-function normalize(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
 app.get('/health', (req, res) => {
   res.json({ service: 'recipes-service', status: 'ok' });
 });
 
-app.get('/recipes', (req, res) => {
+app.get('/recipes', async (req, res) => {
   const { category, difficulty, maxTime, q } = req.query;
-  const text = normalize(q);
   const maxMinutes = Number(maxTime || 0);
+  const text = (q || '').trim().toLowerCase();
 
-  const filtered = recipes.filter((recipe) => {
-    const searchable = normalize([
-      recipe.name,
-      recipe.description,
-      recipe.category,
-      recipe.difficulty,
-      recipe.ingredients.join(' ')
-    ].join(' '));
+  const conditions = [];
+  const params = [];
 
-    const matchesCategory = !category || normalize(recipe.category) === normalize(category);
-    const matchesDifficulty = !difficulty || normalize(recipe.difficulty) === normalize(difficulty);
-    const matchesTime = !maxMinutes || recipe.time <= maxMinutes;
-    const matchesText = !text || searchable.includes(text);
+  if (category) {
+    params.push(category);
+    conditions.push(`r.category = $${params.length}`);
+  }
+  if (difficulty) {
+    params.push(difficulty);
+    conditions.push(`r.difficulty = $${params.length}`);
+  }
+  if (maxMinutes) {
+    params.push(maxMinutes);
+    conditions.push(`r.time_minutes <= $${params.length}`);
+  }
+  if (text) {
+    params.push(`%${text}%`);
+    const p = `$${params.length}`;
+    conditions.push(`(
+      lower(r.name) LIKE ${p} OR
+      lower(r.description) LIKE ${p} OR
+      lower(r.category) LIKE ${p} OR
+      EXISTS (
+        SELECT 1 FROM recipe_ingredients ri2
+        JOIN ingredients i2 ON i2.id = ri2.ingredient_id
+        WHERE ri2.recipe_id = r.id AND lower(i2.name) LIKE ${p}
+      )
+    )`);
+  }
 
-    return matchesCategory && matchesDifficulty && matchesTime && matchesText;
-  });
+  const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
 
-  res.json(filtered);
+  try {
+    const result = await pool.query(`
+      SELECT
+        r.id, r.name, r.description, r.category, r.difficulty,
+        r.time_minutes AS time, r.match_default AS match,
+        COALESCE(
+          (SELECT ARRAY_AGG(i.name ORDER BY i.name)
+           FROM recipe_ingredients ri
+           JOIN ingredients i ON i.id = ri.ingredient_id
+           WHERE ri.recipe_id = r.id),
+          '{}'::text[]
+        ) AS ingredients
+      FROM recipes r
+      ${whereClause}
+      ORDER BY r.name
+    `, params);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error en GET /recipes:', err.message);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
 });
 
-app.get('/recipes/:id', (req, res) => {
+app.get('/recipes/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const recipe = recipes.find((item) => item.id === id);
-
-  if (!recipe) {
-    res.status(404).json({ message: 'Receta no encontrada' });
+  if (!Number.isInteger(id) || id <= 0) {
+    res.status(400).json({ message: 'ID inválido.' });
     return;
   }
 
-  res.json(recipe);
+  try {
+    const result = await pool.query(`
+      SELECT
+        r.id, r.name, r.description, r.category, r.difficulty,
+        r.time_minutes AS time, r.match_default AS match,
+        COALESCE(
+          (SELECT ARRAY_AGG(i.name ORDER BY i.name)
+           FROM recipe_ingredients ri
+           JOIN ingredients i ON i.id = ri.ingredient_id
+           WHERE ri.recipe_id = r.id),
+          '{}'::text[]
+        ) AS ingredients,
+        COALESCE(
+          (SELECT ARRAY_AGG(rs.description ORDER BY rs.step_order)
+           FROM recipe_steps rs
+           WHERE rs.recipe_id = r.id),
+          '{}'::text[]
+        ) AS steps
+      FROM recipes r
+      WHERE r.id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ message: 'Receta no encontrada.' });
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error en GET /recipes/:id:', err.message);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
 });
 
 app.listen(PORT, () => {

@@ -1,8 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
    IMAGE HANDLER — Che rembi'u
    FileReader para vista previa de imagen +
-   simulación de detección de ingredientes por IA.
+   detección real de ingredientes via Gemini Vision API.
 ═══════════════════════════════════════════════════════════ */
+
+var _currentImageBase64 = null;
 
 function initImageHandler() {
   const imageInput = document.getElementById('imageInput');
@@ -13,6 +15,8 @@ function initImageHandler() {
     const preview = document.getElementById('imagePreview');
     if (!preview) return;
 
+    _currentImageBase64 = null;
+
     if (!file) {
       preview.innerHTML = '<p>Subí una imagen para verla aquí.</p>';
       return;
@@ -20,24 +24,46 @@ function initImageHandler() {
 
     const reader = new FileReader();
     reader.onload = function (e) {
+      _currentImageBase64 = e.target.result;
       preview.innerHTML = `<img src="${e.target.result}" alt="Imagen cargada por el usuario" />`;
     };
     reader.readAsDataURL(file);
   });
 }
 
-function simulateImageDetection() {
-  const detected = ['huevo', 'queso Paraguay', 'harina', 'cebolla'];
-
-  const inputEl = document.getElementById('ingredientsInput');
-  if (inputEl) inputEl.value = detected.join(', ');
-
-  const detectedEl = document.getElementById('detectedIngredients');
-  if (detectedEl) {
-    detectedEl.innerHTML = detected
-      .map(i => `<span class="badge">${i}</span>`)
-      .join('');
+async function detectIngredientsFromImage() {
+  if (!_currentImageBase64) {
+    showToast('Primero cargá una imagen.');
+    return;
   }
 
-  showToast('Detección simulada: ingredientes cargados.');
+  const detectBtn = document.getElementById('detectBtn');
+  if (detectBtn) {
+    detectBtn.disabled = true;
+    detectBtn.textContent = 'Detectando…';
+  }
+
+  try {
+    const { ingredients } = await API.detectIngredients(_currentImageBase64);
+
+    const inputEl = document.getElementById('ingredientsInput');
+    if (inputEl) inputEl.value = ingredients.join(', ');
+
+    const detectedEl = document.getElementById('detectedIngredients');
+    if (detectedEl) {
+      detectedEl.innerHTML = ingredients
+        .map(i => `<span class="badge">${i}</span>`)
+        .join('');
+    }
+
+    showToast('Ingredientes detectados por IA: ' + ingredients.join(', '));
+  } catch (err) {
+    console.error('Error al detectar ingredientes:', err.message);
+    showToast('No se pudo detectar ingredientes. Verificá que vision-service esté activo en el puerto 3004.');
+  } finally {
+    if (detectBtn) {
+      detectBtn.disabled = false;
+      detectBtn.textContent = 'Detectar ingredientes';
+    }
+  }
 }

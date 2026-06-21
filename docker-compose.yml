@@ -47,8 +47,7 @@ services:
   # ── Micro-servicio: búsqueda ─────────────────────────────
   search-service:
     build:
-      context: .
-      dockerfile: services/search-service/Dockerfile
+      context: ./services/search-service
     container_name: che-rembiu-search-service
     restart: unless-stopped
     ports:
@@ -84,6 +83,20 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - che-rembiu-net
+
+  # ── Micro-servicio: vision IA ───────────────────────────
+  vision-service:
+    build:
+      context: ./services/vision-service
+    container_name: che-rembiu-vision-service
+    restart: unless-stopped
+    ports:
+      - "3004:3004"
+    environment:
+      PORT: 3004
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     networks:
       - che-rembiu-net
 

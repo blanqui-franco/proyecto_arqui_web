@@ -1,14 +1,15 @@
 /* ═══════════════════════════════════════════════════════════
    API — Che rembi'u
-   Centraliza todos los fetch a los tres micro-servicios.
+   Centraliza todos los fetch a los cinco micro-servicios.
    Carga en primer lugar para que el resto de los módulos pueda
    usarlo en cuanto el DOM esté listo.
 ═══════════════════════════════════════════════════════════ */
 
 const API = (function () {
-  const RECIPES = 'http://localhost:3001';
-  const SEARCH  = 'http://localhost:3002';
-  const HISTORY = 'http://localhost:3003';
+  const RECIPES    = 'http://localhost:3001';
+  const SEARCH     = 'http://localhost:3002';
+  const HISTORY    = 'http://localhost:3003';
+  const VISION     = 'http://localhost:3004';
 
   async function _fetch(url, options = {}) {
     const res = await fetch(url, options);
@@ -61,6 +62,16 @@ const API = (function () {
 
     clearHistory() {
       return _fetch(`${HISTORY}/history`, { method: 'DELETE' });
+    },
+
+    /* ── vision-service ───────────────────────────────── */
+
+    detectIngredients(base64) {
+      return _fetch(`${VISION}/vision`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64 })
+      });
     }
   };
 })();

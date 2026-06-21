@@ -7,6 +7,6 @@ RUN npm install --omit=dev
 
 COPY . .
 
-EXPOSE 3002
+EXPOSE 3004
 
 CMD ["npm", "start"]
