@@ -15,9 +15,9 @@
 | Docker (3 servicios levantando) | ✅ Funcionando |
 | Infraestructura BD (schema + seed + docker-compose) | ✅ Completo |
 | `recipes-service` y `search-service` → PostgreSQL | ✅ Completo |
-| `history-service` → PostgreSQL | 🔲 Pendiente (Integrante 3) |
+| `history-service` → PostgreSQL | ✅ Completo |
 | `vision-service` (Gemini Vision) | ✅ Completo |
-| `suggestion-service` (Gemini texto) | 🔲 Pendiente (Integrante 3) |
+| `suggestion-service` (Gemini texto) | ✅ Completo |
 
 ---
 
@@ -341,20 +341,20 @@ proyecto_arqui_web/
 
 #### 🧑‍💻 Integrante 3 — `history-service`, `suggestion-service` y documentación
 
-- [ ] Actualizar `history-service/index.js` para usar BD:
+- [x] Actualizar `history-service/index.js` para usar BD:
   - `POST /history`: INSERT en `search_history`.
   - `GET /history`: SELECT últimos 20 registros.
   - `DELETE /history`: DELETE todos.
   - Eliminar array en memoria.
-- [ ] Crear `services/suggestion-service/`:
+- [x] Crear `services/suggestion-service/`:
   - `index.js`: recibe `{ ingredients: string[] }`, consulta la BD para obtener las recetas disponibles, construye un prompt con esa lista como contexto y pide a Gemini que sugiera cuáles preparar y por qué, devuelve `{ suggestion: string }`.
   - `db.js` para consultar la BD de recetas.
   - `package.json` con `express`, `cors`, `@google/generative-ai`, `pg`.
   - `Dockerfile`.
-- [ ] Actualizar `js/api.js` para agregar:
+- [x] Actualizar `js/api.js` para agregar:
   - `getSuggestion(ingredients)` → `POST suggestion-service/suggest`
-- [ ] Agregar en el front-end (vista Ingredientes) un botón "Sugerencia IA" que muestre la respuesta de Gemini en un panel.
-- [ ] Actualizar `js/storage.js` para que el historial no se guarde en `localStorage`.
+- [x] Agregar en el front-end (vista Ingredientes) un botón "Sugerencia IA" que muestre la respuesta de Gemini en un panel.
+- [x] Actualizar `js/storage.js` para que el historial no se guarde en `localStorage`.
 - [ ] Verificar flujo completo con BD real e IA.
 - [ ] Documentar todos los endpoints (incluyendo los nuevos) en `README.md`.
 

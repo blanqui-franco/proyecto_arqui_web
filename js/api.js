@@ -10,6 +10,7 @@ const API = (function () {
   const SEARCH     = 'http://localhost:3002';
   const HISTORY    = 'http://localhost:3003';
   const VISION     = 'http://localhost:3004';
+  const SUGGESTION = 'http://localhost:3005';
 
   async function _fetch(url, options = {}) {
     const res = await fetch(url, options);
@@ -71,6 +72,14 @@ const API = (function () {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: base64 })
+      });
+    },
+
+    getSuggestion(ingredients) {
+      return _fetch(`${SUGGESTION}/suggest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredients: ingredients })
       });
     }
   };

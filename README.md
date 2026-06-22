@@ -25,9 +25,9 @@ Proyecto académico — materia **Arquitectura Web**.
 | Front-End estructurado (HTML + CSS + JS) | ✅ Completo |
 | Micro-servicios con datos mock | ✅ Funcionando |
 | PostgreSQL con schema y seed | ✅ Listo |
-| Servicios conectados a BD real | 🔲 En desarrollo |
-| IA: reconocimiento de imagen (Gemini) | 🔲 Pendiente |
-| IA: sugerencia de recetas (Gemini) | 🔲 Pendiente |
+| Servicios conectados a BD real | ✅ Implementado |
+| IA: reconocimiento de imagen (Gemini) | ✅ Implementado |
+| IA: sugerencia de recetas (Gemini) | ✅ Implementado |
 
 ---
 

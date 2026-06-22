@@ -1,0 +1,15 @@
+{
+  "name": "suggestion-service",
+  "version": "1.0.0",
+  "description": "Servicio de sugerencias IA para Che rembi'u (Integrante 3).",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "pg": "^8.11.3",
+    "@google/generative-ai": "^0.1.0"
+  }
+}

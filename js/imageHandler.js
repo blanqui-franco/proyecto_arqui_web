@@ -29,6 +29,11 @@ function initImageHandler() {
     };
     reader.readAsDataURL(file);
   });
+
+  const detectBtn = document.getElementById('detectBtn');
+  if (detectBtn) {
+    detectBtn.addEventListener('click', detectIngredientsFromImage);
+  }
 }
 
 async function detectIngredientsFromImage() {
@@ -46,7 +51,7 @@ async function detectIngredientsFromImage() {
   try {
     const { ingredients } = await API.detectIngredients(_currentImageBase64);
 
-    const inputEl = document.getElementById('ingredientsInput');
+    const inputEl = document.getElementById('ingredientInput') || document.getElementById('ingredientsInput');
     if (inputEl) inputEl.value = ingredients.join(', ');
 
     const detectedEl = document.getElementById('detectedIngredients');

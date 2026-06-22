@@ -227,17 +227,25 @@
                 <button class="suggestion-chip bg-secondary-container text-on-secondary-fixed-variant px-md py-xs rounded-full text-body-md hover:bg-primary-fixed transition-colors">leche</button>
               </div>
             </div>
-          </div>
 
-          <div class="space-y-base">
-            <h3 class="text-title-md text-on-surface">Mis ingredientes</h3>
-            <div id="ingredientsList" class="flex flex-wrap gap-sm min-h-[100px] p-md bg-[#EEF5F0] border-2 border-dashed border-outline-variant rounded-xl items-start content-start">
-              <div id="ingredientsEmptyState" class="text-on-surface-variant text-body-md italic w-full text-center py-md">No agregaste ingredientes todavía.</div>
+              <div class="mt-lg bg-surface-container-lowest border border-secondary-container rounded-xl p-md">
+                <div class="flex items-center justify-between mb-sm">
+                  <div>
+                    <h3 class="text-title-md text-on-surface">Detectar ingredientes</h3>
+                    <p class="text-body-sm text-on-surface-variant">Subí una foto y la IA detectará los ingredientes.</p>
+                  </div>
+                </div>
+                <input id="imageInput" type="file" accept="image/*" class="w-full rounded-lg border border-outline-variant bg-white px-md py-sm text-body-md" />
+                <button id="detectBtn" class="mt-md w-full bg-tertiary text-on-tertiary py-md rounded-xl font-bold text-title-md hover:bg-tertiary-container hover:text-on-tertiary-container transition-all active:scale-95">
+                  Detectar ingredientes
+                </button>
+                <div id="imagePreview" class="mt-md rounded-xl border border-outline-variant bg-white min-h-[180px] flex items-center justify-center text-on-surface-variant p-md text-center">
+                  Subí una imagen para verla aquí.
+                </div>
+                <div id="detectedIngredients" class="mt-md flex flex-wrap gap-2"></div>
+              </div>
             </div>
-            <p id="ingredientError" class="text-error text-label-sm" style="display:none">Debés agregar al menos un ingrediente.</p>
           </div>
-        </div>
-
         <!-- Columna derecha -->
         <div class="lg:col-span-4">
           <div class="sticky top-24 bg-surface-container-lowest border border-secondary-container rounded-xl p-md flex flex-col items-center text-center shadow-sm">
@@ -252,6 +260,10 @@
             <button id="searchBtn" class="w-full bg-primary text-on-primary py-md px-lg rounded-xl font-bold text-title-md hover:bg-primary-container hover:text-on-primary-container transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
               Ver recetas sugeridas
             </button>
+            <button id="suggestBtn" class="w-full mt-3 bg-tertiary text-on-tertiary py-md px-lg rounded-xl font-bold text-title-md hover:bg-tertiary-container hover:text-on-tertiary-container transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Sugerencia IA
+            </button>
+            <div id="suggestionPanel" class="w-full mt-3 p-md bg-surface-container rounded-lg text-on-surface-variant text-body-md" style="display:none; white-space:pre-wrap"></div>
             <p class="mt-md text-caption text-outline">Agregá al menos 1 ingrediente para ver recomendaciones.</p>
             <button class="mt-sm text-primary text-label-sm hover:underline" data-action="load-demo">
               Usar ejemplo
@@ -474,6 +486,7 @@
 <script src="js/recipes.js"></script>
 <script src="js/favorites.js"></script>
 <script src="js/history.js"></script>
+<script src="js/imageHandler.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

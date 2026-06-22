@@ -100,6 +100,27 @@ services:
     networks:
       - che-rembiu-net
 
+  suggestion-service:
+    build:
+      context: ./services/suggestion-service
+    container_name: che-rembiu-suggestion-service
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      PORT: 3005
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: che_rembiu
+      POSTGRES_USER: cheuser
+      POSTGRES_PASSWORD: chepass
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - che-rembiu-net
+
 # ── Volúmenes ────────────────────────────────────────────────
 volumes:
   postgres-data:

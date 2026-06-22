@@ -48,6 +48,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
+  var suggestBtn = document.getElementById('suggestBtn');
+  if (suggestBtn) {
+    suggestBtn.addEventListener('click', function () {
+      handleSuggestion();
+    });
+  }
+
   /* ── 3. Hero search ── */
   var heroBtn   = document.getElementById('heroSearchBtn');
   var heroInput = document.getElementById('heroSearchInput');
@@ -71,6 +78,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (e.key === 'Enter') heroBtn && heroBtn.click();
     });
   }
+
+  initImageHandler();
 
   /* ── 4. Delegación de eventos data-action ── */
   document.addEventListener('click', function (e) {
@@ -155,9 +164,36 @@ function _updateChipsUI() {
 
   if (counter) counter.textContent = searchIngredients.length;
   if (searchBtn) searchBtn.disabled = searchIngredients.length === 0;
+  var suggestBtn = document.getElementById('suggestBtn');
+  if (suggestBtn) suggestBtn.disabled = searchIngredients.length === 0;
 
   /* Actualizar barra de ingredientes activos en recipesView */
   _updateActiveIngredientsBar();
+}
+
+async function handleSuggestion() {
+  if (!searchIngredients.length) return;
+
+  var suggestBtn = document.getElementById('suggestBtn');
+  var panel = document.getElementById('suggestionPanel');
+
+  if (suggestBtn) {
+    suggestBtn.disabled = true;
+    suggestBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Generando…';
+  }
+  if (panel) { panel.style.display = 'none'; panel.textContent = ''; }
+
+  try {
+    var res = await API.getSuggestion(searchIngredients);
+    var text = res && (res.suggestion || res.suggestions || res.result || res.message) || JSON.stringify(res);
+    if (panel) { panel.textContent = text; panel.style.display = ''; }
+    showToast('Sugerencia generada por el servicio IA.');
+  } catch (err) {
+    console.error('handleSuggestion error', err);
+    showToast('No se pudo obtener la sugerencia IA. Verificá que el servicio esté en el puerto 3005.');
+  } finally {
+    if (suggestBtn) { suggestBtn.disabled = searchIngredients.length === 0; suggestBtn.innerHTML = 'Sugerencia IA'; }
+  }
 }
 
 function _updateActiveIngredientsBar() {
