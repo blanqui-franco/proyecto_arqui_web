@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Che rembi'u 🍲 — Cocinás con lo que tenés</title>
+  <title>Che rembi'u — Cocinás con lo que tenés</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -113,7 +113,7 @@
 <header class="bg-surface sticky top-0 z-50 border-b border-outline-variant">
   <div class="flex justify-between items-center w-full px-md py-sm max-w-container-max mx-auto h-16">
     <button class="text-title-md font-bold text-primary hover:opacity-80 transition-opacity" data-navigate="homeView">
-      Che rembi'u 🍲
+      Che rembi'u
     </button>
     <nav class="hidden md:flex items-center gap-md" aria-label="Navegación principal">
       <span class="nav-link text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" data-navigate="homeView">Inicio</span>
@@ -136,7 +136,7 @@
     <!-- Hero -->
     <div class="max-w-container-max mx-auto px-md py-xl md:py-32 text-center flex flex-col items-center">
       <div class="mb-sm">
-        <span class="bg-secondary-container text-on-secondary-fixed-variant px-md py-1 rounded-full text-label-sm">✨ Prototipo con micro-servicios</span>
+        <span class="bg-secondary-container text-on-secondary-fixed-variant px-md py-1 rounded-full text-label-sm">Prototipo con micro-servicios</span>
       </div>
       <h1 class="text-headline-lg-mobile md:text-display-lg text-on-surface mb-md">¿Qué tenés en casa?</h1>
       <p class="text-body-lg text-on-surface-variant max-w-2xl mb-lg">
@@ -228,6 +228,17 @@
               </div>
             </div>
 
+              <!-- Chips de ingredientes agregados -->
+              <div class="flex items-center justify-between mt-md mb-xs">
+                <p class="text-label-sm text-secondary">Ingredientes seleccionados</p>
+                <button data-action="clear-ingredients" class="text-error text-label-sm hover:bg-error-container px-sm py-1 rounded-lg transition-colors flex items-center gap-xs">
+                  <span class="material-symbols-outlined" style="font-size:16px">delete_sweep</span> Limpiar
+                </button>
+              </div>
+              <div id="ingredientsList" class="flex flex-wrap gap-sm min-h-[36px]">
+                <p id="ingredientsEmptyState" class="text-caption text-outline italic">Ningún ingrediente agregado todavía.</p>
+              </div>
+
               <div class="mt-lg bg-surface-container-lowest border border-secondary-container rounded-xl p-md">
                 <div class="flex items-center justify-between mb-sm">
                   <div>
@@ -236,9 +247,14 @@
                   </div>
                 </div>
                 <input id="imageInput" type="file" accept="image/*" class="w-full rounded-lg border border-outline-variant bg-white px-md py-sm text-body-md" />
-                <button id="detectBtn" class="mt-md w-full bg-tertiary text-on-tertiary py-md rounded-xl font-bold text-title-md hover:bg-tertiary-container hover:text-on-tertiary-container transition-all active:scale-95">
-                  Detectar ingredientes
-                </button>
+                <div class="mt-md flex gap-sm">
+                  <button id="detectBtn" class="flex-1 bg-tertiary text-on-tertiary py-md rounded-xl font-bold text-title-md hover:bg-tertiary-container hover:text-on-tertiary-container transition-all active:scale-95">
+                    Detectar ingredientes
+                  </button>
+                  <button id="clearImageBtn" class="bg-error-container text-error px-md rounded-xl font-bold hover:opacity-80 transition-all active:scale-95 flex items-center gap-xs" title="Limpiar imagen">
+                    <span class="material-symbols-outlined">image_not_supported</span>
+                  </button>
+                </div>
                 <div id="imagePreview" class="mt-md rounded-xl border border-outline-variant bg-white min-h-[180px] flex items-center justify-center text-on-surface-variant p-md text-center">
                   Subí una imagen para verla aquí.
                 </div>
@@ -463,13 +479,8 @@
 <footer class="bg-surface-container-lowest border-t border-outline-variant">
   <div class="flex flex-col md:flex-row justify-between items-center w-full px-md py-lg max-w-container-max mx-auto gap-lg">
     <div class="flex flex-col items-center md:items-start gap-xs">
-      <span class="text-title-md font-bold text-secondary">Che rembi'u 🍲</span>
+      <span class="text-title-md font-bold text-secondary">Che rembi'u</span>
       <p class="text-caption text-on-surface-variant">© 2026 Che rembi'u</p>
-    </div>
-    <div class="flex flex-wrap justify-center gap-xl">
-      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sobre Nosotros</a>
-      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contacto</a>
-      <a class="text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacidad</a>
     </div>
   </div>
 </footer>

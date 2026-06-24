@@ -47,21 +47,35 @@ app.post('/vision', async (req, res) => {
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
+    const prompt =
+      'Analizá esta imagen e identificá todos los ingredientes de comida visibles. ' +
+      'Respondé ÚNICAMENTE con un objeto JSON válido con este formato exacto, sin texto adicional:\n' +
+      '{"ingredients":["ingrediente1","ingrediente2","ingrediente3"]}\n' +
+      'Reglas: nombres en español, un solo nombre por ingrediente (sin paréntesis ni variantes), ' +
+      'sin cantidades ni adjetivos de color/tamaño, sin punto final.';
+
     const result = await model.generateContent([
-      {
-        inlineData: {
-          mimeType,
-          data: base64Data
-        }
-      },
-      'Lista los ingredientes de comida que ves en esta imagen. Responde solo con una lista de nombres en español, separados por comas.'
+      { inlineData: { mimeType, data: base64Data } },
+      prompt
     ]);
 
-    const text = result.response.text();
-    const ingredients = text
-      .split(',')
-      .map((s) => s.replace(/\n/g, '').trim())
-      .filter(Boolean);
+    const text = result.response.text().trim();
+
+    let ingredients = [];
+    try {
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      ingredients = (parsed.ingredients || [])
+        .map((s) => String(s).trim().toLowerCase())
+        .filter(Boolean);
+    } catch (parseErr) {
+      /* fallback: split por coma o salto de línea */
+      ingredients = text
+        .replace(/[\{\}\[\]"]/g, '')
+        .split(/[,\n]+/)
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean);
+    }
 
     res.json({ ingredients });
   } catch (err) {

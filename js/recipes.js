@@ -57,9 +57,8 @@ function _catClass(category) {
   return map[category] || 'cat-default';
 }
 
-function _catEmoji(category) {
-  var map = { 'Tradicional': '🍲', 'Rápida': '⚡', 'Económica': '💚', 'Postre': '🍮' };
-  return map[category] || '🍽️';
+function _catEmoji() {
+  return '';
 }
 
 /* ── Renderizado de la grilla ─────────────────────────── */
@@ -72,7 +71,11 @@ function renderRecipes() {
   var category   = document.getElementById('categoryFilter').value;
   var maxTime    = Number(document.getElementById('timeFilter').value || 0);
 
-  var filtered = visibleRecipes.filter(function (recipe) {
+  var sorted = visibleRecipes.slice().sort(function (a, b) {
+    return (b.match || 0) - (a.match || 0);
+  });
+
+  var filtered = sorted.filter(function (recipe) {
     var searchable = normalize(
       [recipe.name, recipe.category || '', (recipe.ingredients || []).join(' ')].join(' ')
     );

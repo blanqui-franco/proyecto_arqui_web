@@ -77,7 +77,7 @@ async function clearHistory() {
     await API.clearHistory();
     showToast('Historial limpiado.');
     renderHistory();
-  } catch {
+  } catch (e) {
     showToast('No se pudo limpiar el historial. Verificá que el servicio esté activo.');
   }
 }

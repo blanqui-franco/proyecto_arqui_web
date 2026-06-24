@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3002;
 
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    if (!origin || origin === 'null' || /^http:\/\/localhost(:\d+)?$/.test(origin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) {
       callback(null, true);
       return;
     }
@@ -26,12 +26,13 @@ function normalize(value) {
 
 function calculateMatch(recipeIngredients, inputIngredients) {
   if (!recipeIngredients.length) return 0;
-  const matches = inputIngredients.filter((input) =>
-    recipeIngredients.some((ri) =>
-      ri.includes(input) || input.includes(ri)
-    )
-  );
-  return Math.round((matches.length / recipeIngredients.length) * 100);
+  const matched = inputIngredients.filter((input) =>
+    recipeIngredients.some((ri) => ri.includes(input) || input.includes(ri))
+  ).length;
+  if (matched === 0) return 0;
+  const coverage  = matched / recipeIngredients.length;          // ¿cuánto de la receta cubrís?
+  const precision = matched / inputIngredients.length;           // ¿qué tan relevantes son tus ingredientes?
+  return Math.round(((2 * coverage + precision) / 3) * 100);
 }
 
 app.get('/health', (req, res) => {

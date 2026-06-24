@@ -38,7 +38,7 @@ async function renderFavorites() {
     try {
       recipes = await API.getRecipes();
       allRecipesCache = recipes;
-    } catch {
+    } catch (e) {
       container.innerHTML =
         '<div class="col-span-3 text-center py-xl text-on-surface-variant italic">No se pudo obtener las recetas. Verificá que el servicio esté activo.</div>';
       return;
@@ -58,7 +58,7 @@ async function renderFavorites() {
   container.innerHTML = favoriteRecipes.map(function (recipe) {
     var time   = recipe.time || recipe.timeMinutes || '?';
     var catCls = typeof _catClass === 'function' ? _catClass(recipe.category) : 'cat-default';
-    var emoji  = typeof _catEmoji === 'function' ? _catEmoji(recipe.category) : '🍽️';
+    var emoji  = typeof _catEmoji === 'function' ? _catEmoji(recipe.category) : '';
     return (
       '<article class="recipe-card bg-white rounded-xl border border-outline-variant flat-shadow overflow-hidden transition-all group flex flex-col h-full">' +
         '<div class="relative aspect-video overflow-hidden ' + catCls + ' flex items-center justify-center cursor-pointer" onclick="openRecipeDetail(' + recipe.id + ')">' +

@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    if (!origin || origin === 'null' || /^http:\/\/localhost(:\d+)?$/.test(origin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) {
       callback(null, true);
       return;
     }

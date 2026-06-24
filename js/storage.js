@@ -11,7 +11,7 @@ const Storage = (function () {
     getFavorites() {
       try {
         return JSON.parse(localStorage.getItem(KEY)) || [];
-      } catch {
+      } catch (e) {
         return [];
       }
     },

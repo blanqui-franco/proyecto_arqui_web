@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test — vision-service</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+    h1 { color: #316342; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    input[type="file"] { width: 100%; padding: 10px; margin-bottom: 16px; border: 2px dashed #ccc; border-radius: 8px; cursor: pointer; }
+    button { background: #316342; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; width: 100%; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    #preview { max-width: 100%; max-height: 300px; border-radius: 8px; display: none; margin-bottom: 16px; }
+    #result { display: none; }
+    .chip { display: inline-block; background: #eaf7f0; color: #2f7c59; padding: 6px 14px; border-radius: 999px; margin: 4px; font-weight: bold; }
+    .error { color: #c0392b; background: #fee9e7; padding: 12px; border-radius: 8px; }
+    #status { margin-top: 12px; color: #555; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<h1>🔍 Test vision-service</h1>
+
+<div class="card">
+  <label><strong>Seleccioná una imagen con ingredientes:</strong></label><br><br>
+  <input type="file" id="imageInput" accept="image/*" />
+  <img id="preview" alt="Vista previa" />
+  <button id="sendBtn" disabled>Detectar ingredientes con Gemini</button>
+  <p id="status"></p>
+</div>
+
+<div class="card" id="result">
+  <h2>Ingredientes detectados</h2>
+  <div id="chips"></div>
+</div>
+
+<script>
+  const input   = document.getElementById('imageInput');
+  const preview = document.getElementById('preview');
+  const btn     = document.getElementById('sendBtn');
+  const status  = document.getElementById('status');
+  const result  = document.getElementById('result');
+  const chips   = document.getElementById('chips');
+
+  let base64Image = null;
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      base64Image = e.target.result;
+      preview.src = base64Image;
+      preview.style.display = 'block';
+      btn.disabled = false;
+      result.style.display = 'none';
+      status.textContent = '';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  btn.addEventListener('click', async () => {
+    if (!base64Image) return;
+
+    btn.disabled = true;
+    status.textContent = 'Enviando imagen a Gemini...';
+    result.style.display = 'none';
+    chips.innerHTML = '';
+
+    try {
+      const res = await fetch('http://localhost:3004/vision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Image })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        status.innerHTML = `<span class="error">Error: ${data.message}</span>`;
+        return;
+      }
+
+      status.textContent = `✅ Detección completada — ${data.ingredients.length} ingrediente(s) encontrado(s).`;
+      result.style.display = 'block';
+      chips.innerHTML = data.ingredients
+        .map(i => `<span class="chip">${i}</span>`)
+        .join('');
+
+    } catch (err) {
+      status.innerHTML = `<span class="error">No se pudo conectar con el vision-service (puerto 3004). ¿Está corriendo Docker?</span>`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>

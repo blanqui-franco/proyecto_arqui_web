@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     var totalEl = document.getElementById('totalRecipes');
     if (totalEl) totalEl.textContent = recipes.length;
     renderFeaturedRecipes(recipes);
-  } catch {
+  } catch (e) {
     var totalEl = document.getElementById('totalRecipes');
     if (totalEl) totalEl.textContent = '?';
   }
@@ -86,6 +86,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     var btn = e.target.closest('[data-action]');
     if (!btn) return;
     switch (btn.dataset.action) {
+      case 'clear-ingredients':
+        clearIngredients();
+        break;
       case 'load-demo':
         loadDemoIngredients();
         break;
@@ -185,9 +188,28 @@ async function handleSuggestion() {
 
   try {
     var res = await API.getSuggestion(searchIngredients);
-    var text = res && (res.suggestion || res.suggestions || res.result || res.message) || JSON.stringify(res);
-    if (panel) { panel.textContent = text; panel.style.display = ''; }
-    showToast('Sugerencia generada por el servicio IA.');
+    var text = res.suggestion || res.message || JSON.stringify(res);
+    var ids  = Array.isArray(res.recipeIds) ? res.recipeIds : [];
+    var newCount = res.newCount || 0;
+
+    if (newCount > 0) {
+      try { var fresh = await API.getRecipes(); allRecipesCache = fresh; } catch (e) {}
+    }
+
+    if (panel) {
+      var label = ids.length > 0
+        ? 'Ver receta' + (ids.length > 1 ? 's' : '') + ' sugerida' + (ids.length > 1 ? 's' : '') +
+          (newCount > 0 ? ' (' + newCount + ' nueva' + (newCount > 1 ? 's' : '') + ')' : '')
+        : '';
+      var btnHtml = ids.length > 0
+        ? '<button onclick="showSuggestedRecipes([' + ids.join(',') + '])" ' +
+            'class="mt-sm w-full bg-primary text-on-primary py-sm rounded-lg font-bold text-label-sm hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-xs">' +
+            '<span class="material-symbols-outlined" style="font-size:18px">restaurant_menu</span> ' + label + '</button>'
+        : '';
+      panel.innerHTML = '<p style="white-space:pre-wrap">' + text + '</p>' + btnHtml;
+      panel.style.display = '';
+    }
+    showToast(newCount > 0 ? newCount + ' receta(s) nueva(s) guardada(s) en la BD.' : 'Sugerencia generada por la IA.');
   } catch (err) {
     console.error('handleSuggestion error', err);
     showToast('No se pudo obtener la sugerencia IA. Verificá que el servicio esté en el puerto 3005.');
@@ -244,7 +266,7 @@ async function handleSearch() {
     showToast('Sugerencias generadas desde el servicio de búsqueda.');
     showView('recipesView');
 
-  } catch {
+  } catch (e) {
     showToast(
       'No se pudo conectar al servicio de búsqueda. ' +
       'Verificá que docker compose esté activo en el puerto 3002.'
@@ -260,6 +282,22 @@ async function handleSearch() {
 /* ══════════════════════════════════════════════════════
    ACCIONES AUXILIARES
 ══════════════════════════════════════════════════════ */
+
+async function showSuggestedRecipes(ids) {
+  var matched = allRecipesCache.filter(function (r) { return ids.includes(r.id); });
+  if (matched.length < ids.length) {
+    try { var fresh = await API.getRecipes(); allRecipesCache = fresh; matched = fresh.filter(function (r) { return ids.includes(r.id); }); } catch (_) {}
+  }
+  visibleRecipes = matched.length > 0 ? matched : allRecipesCache;
+  recipesLoaded = true;
+  showView('recipesView');
+}
+
+function clearIngredients() {
+  searchIngredients = [];
+  _updateChipsUI();
+  showToast('Ingredientes limpiados.');
+}
 
 function loadDemoIngredients() {
   searchIngredients = [];
